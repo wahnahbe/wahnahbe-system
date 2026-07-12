@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#08050F}
+a{color:#3FE8FF}a:hover{color:#D24BFF}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:rgba(22,12,40,.4)}
+::-webkit-scrollbar-thumb{background:rgba(210,75,255,.35)}
+input,select,button,textarea{font-family:'Share Tech Mono',monospace}
+select option{background:#140B26;color:#F2EAFF}
+input[type=range]{-webkit-appearance:none;appearance:none;height:4px;background:rgba(210,75,255,.25);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:10px;height:14px;background:#3FE8FF;cursor:pointer;border:1px solid #D24BFF}
+@keyframes notifIn{0%{opacity:0;transform:translate(-50%,-8px) skewX(0deg)}30%{opacity:1;transform:translate(-49.7%,0) skewX(2deg)}45%{transform:translate(-50.3%,0) skewX(-2deg)}60%{transform:translate(-50%,0) skewX(0)}100%{opacity:1;transform:translate(-50%,0)}}
+@keyframes ascendIn{0%{opacity:0}40%{opacity:1}55%{opacity:.7}70%{opacity:1}100%{opacity:1}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 14px rgba(210,75,255,.25)}50%{box-shadow:0 0 26px rgba(210,75,255,.5)}}
+@keyframes bootBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes bootOut{0%{opacity:1;filter:blur(0)}100%{opacity:0;filter:blur(6px);visibility:hidden}}
+@keyframes dashIn{0%{opacity:.2;transform:translateY(10px) scale(.995)}100%{opacity:1;transform:none}}
+@keyframes glitchTxt{0%,100%{text-shadow:0 0 8px rgba(210,75,255,.6)}25%{text-shadow:-2px 0 rgba(63,232,255,.8),2px 0 rgba(255,255,255,.6)}50%{text-shadow:2px 0 rgba(63,232,255,.8),-2px 0 rgba(210,75,255,.6)}}
+[data-rm="1"] *{animation:none !important;transition:none !important}
+</style>
+</helmet>
+<div data-screen-label="WAHNAHBE SYSTEM" data-rm="{{ rm }}" style="position:relative;min-height:100vh;background:radial-gradient(ellipse 80% 60% at 50% -10%, rgba(60,25,100,.55), rgba(8,5,15,0) 60%), #08050F;color:#F2EAFF;font-family:'Share Tech Mono',monospace;overflow:hidden;box-sizing:border-box">
+
+  <sc-if value="{{ scanlines }}" hint-placeholder-val="{{ true }}">
+    <div style="position:fixed;inset:0;z-index:40;pointer-events:none;background:repeating-linear-gradient(0deg, rgba(63,232,255,.022) 0px, rgba(63,232,255,.022) 1px, transparent 1px, transparent 3px)"></div>
+  </sc-if>
+
+  <!-- ══════════ HEADER TICKER ══════════ -->
+  <div style="animation:{{ dashAnim }};display:flex;align-items:stretch;gap:0;height:84px;margin:12px 14px 0;background:rgba(22,12,40,0.72);backdrop-filter:blur(8px);border:1px solid rgba(210,75,255,.5);clip-path:polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);box-shadow:inset 0 0 30px rgba(210,75,255,.07)">
+    <div style="display:flex;flex-direction:column;justify-content:center;padding:0 22px 0 26px;border-right:1px solid rgba(210,75,255,.3);min-width:250px">
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:27px;letter-spacing:.14em;color:#F2EAFF;text-shadow:0 0 14px rgba(210,75,255,.65)">WAHNAHBE</div>
+        <div style="font-size:10px;color:#D24BFF;letter-spacing:.1em">SYS://ONLINE</div>
+      </div>
+      <div style="font-size:10.5px;color:rgba(63,232,255,.75);letter-spacing:.12em;margin-top:3px">GUTIERREZ, J. · DATA OPERATIVE · «<span style="color:#3FE8FF">{{ title }}</span>»</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:0 24px;border-right:1px solid rgba(210,75,255,.3)">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div style="display:flex;align-items:baseline;gap:10px">
+          <span style="font-size:10px;color:#D24BFF;letter-spacing:.18em">LEVEL</span>
+          <span style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:30px;line-height:1;color:#3FE8FF;text-shadow:0 0 12px rgba(63,232,255,.5)">{{ level }}</span>
+        </div>
+        <div style="font-size:10px;color:rgba(242,234,255,.55);letter-spacing:.08em">{{ xpLabel }}</div>
+      </div>
+      <div style="position:relative;height:9px;background:rgba(11,7,22,.9);border:1px solid rgba(210,75,255,.4);clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)">
+        <div style="position:absolute;top:0;bottom:0;left:0;width:{{ xpPct }}%;background:linear-gradient(90deg,#7A1FBF,#D24BFF 60%,#3FE8FF);box-shadow:0 0 10px rgba(210,75,255,.7)"></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px;padding:0 20px;border-right:1px solid rgba(210,75,255,.3)">
+      <div style="text-align:right">
+        <div style="font-size:10px;color:#D24BFF;letter-spacing:.14em">{{ dateStr }}</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:600;font-size:24px;color:#F2EAFF;letter-spacing:.08em">{{ timeStr }}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
+        <svg width="46" height="46" viewBox="0 0 46 46">
+          <circle cx="23" cy="23" r="18" fill="none" stroke="rgba(210,75,255,.2)" stroke-width="3"></circle>
+          <circle cx="23" cy="23" r="18" fill="none" stroke="#3FE8FF" stroke-width="3" stroke-dasharray="{{ momDash }}" transform="rotate(-90 23 23)" style="filter:drop-shadow(0 0 4px rgba(63,232,255,.8))"></circle>
+          <text x="23" y="27" text-anchor="middle" fill="#3FE8FF" font-size="11" font-family="'Share Tech Mono',monospace">{{ momentum }}</text>
+        </svg>
+        <div style="font-size:8.5px;color:rgba(63,232,255,.6);letter-spacing:.16em">MOMENTUM</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:6px;padding:0 18px">
+      <button onClick="{{ onSettingsToggle }}" style="background:rgba(210,75,255,.12);border:1px solid rgba(210,75,255,.5);color:#3FE8FF;font-size:10px;letter-spacing:.16em;padding:6px 12px;cursor:pointer;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)" style-hover="background:rgba(210,75,255,.28)">SYS://CONFIG</button>
+      <button onClick="{{ onRmToggle }}" style="background:none;border:1px solid rgba(210,75,255,.3);color:rgba(63,232,255,.7);font-size:9px;letter-spacing:.12em;padding:4px 12px;cursor:pointer" style-hover="border-color:rgba(210,75,255,.7)">{{ rmLabel }}</button>
+    </div>
+  </div>
+
+  <!-- ══════════ AGENDA STRIP ══════════ -->
+  <div data-screen-label="AGENDA" style="animation:{{ dashAnim }};display:flex;align-items:center;gap:12px;margin:12px 14px 0;padding:7px 14px;background:rgba(22,12,40,0.72);backdrop-filter:blur(8px);border:1px solid rgba(210,75,255,.4);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);box-shadow:inset 0 0 20px rgba(210,75,255,.05)">
+    <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.2em;color:#D24BFF;white-space:nowrap">OPS://TODAY</div>
+    <div style="width:1px;align-self:stretch;background:rgba(210,75,255,.3)"></div>
+    <div style="flex:1;display:flex;gap:8px;overflow-x:auto;align-items:center;min-width:0">
+      <sc-if value="{{ agEmpty }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:10px;color:rgba(242,234,255,.45);letter-spacing:.08em;white-space:nowrap">[SYS] NO SCHEDULED EVENTS TODAY. LOG ONE →</div>
+      </sc-if>
+      <sc-for list="{{ agenda }}" as="ev" hint-placeholder-count="0">
+        <div style="display:flex;align-items:center;gap:8px;border:1px solid {{ ev.border }};background:rgba(16,9,30,.6);padding:4px 10px;white-space:nowrap;flex:none;clip-path:polygon(6px 0,100% 0,100% 100%,0 100%,0 6px)">
+          <span style="font-size:10px;color:#3FE8FF">{{ ev.time }}</span>
+          <span style="font-size:10.5px;color:#F2EAFF;letter-spacing:.05em">{{ ev.title }}</span>
+          <span style="font-size:8px;color:{{ ev.tagCol }};border:1px solid {{ ev.border }};padding:1px 5px;letter-spacing:.14em">{{ ev.type }}</span>
+          <button onClick="{{ ev.onDel }}" style="background:none;border:none;color:rgba(63,232,255,.45);font-size:11px;cursor:pointer;padding:0" style-hover="color:#3FE8FF">×</button>
+        </div>
+      </sc-for>
+      <sc-if value="{{ agUpcoming }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:9px;color:rgba(63,232,255,.55);letter-spacing:.12em;white-space:nowrap;flex:none">+{{ agUpcoming }} UPCOMING</div>
+      </sc-if>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;flex:none">
+      <input type="date" value="{{ agDate }}" onChange="{{ onAgDate }}" style="background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.35);color:#F2EAFF;font-size:9.5px;padding:4px 6px;outline:none;color-scheme:dark">
+      <input type="time" value="{{ agTime }}" onChange="{{ onAgTime }}" style="background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.35);color:#F2EAFF;font-size:9.5px;padding:4px 6px;outline:none;color-scheme:dark">
+      <input value="{{ agTitle }}" onChange="{{ onAgTitle }}" placeholder="EVENT…" style="width:150px;background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.35);color:#F2EAFF;font-size:10px;padding:4px 8px;outline:none;letter-spacing:.05em">
+      <select value="{{ agType }}" onChange="{{ onAgType }}" style="background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.35);color:#3FE8FF;font-size:9px;padding:4px 3px;outline:none">
+        <option value="SCHOOL">SCHOOL</option><option value="INTERVIEW">INTERVIEW</option><option value="WORK">WORK</option><option value="TRAINING">TRAINING</option><option value="OTHER">OTHER</option>
+      </select>
+      <button onClick="{{ onAgAdd }}" style="background:rgba(210,75,255,.14);border:1px solid rgba(210,75,255,.55);color:#3FE8FF;font-size:12px;cursor:pointer;padding:2px 10px" style-hover="background:rgba(210,75,255,.3)">+</button>
+    </div>
+  </div>
+
+  <!-- ══════════ THREE COLUMNS ══════════ -->
+  <div style="animation:{{ dashAnim }};display:grid;grid-template-columns:335px 1fr 355px;gap:14px;padding:14px;height:calc(100vh - 176px);box-sizing:border-box">
+
+    <!-- ── LEFT: STATUS ── -->
+    <div data-screen-label="STATUS" style="display:flex;flex-direction:column;background:rgba(22,12,40,0.72);backdrop-filter:blur(8px);border:1px solid rgba(210,75,255,.45);clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);box-shadow:inset 0 0 26px rgba(210,75,255,.06);overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 16px 9px;border-bottom:1px solid rgba(210,75,255,.35)">
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:.2em;color:#D24BFF">SYS://STATUS</div>
+        <sc-if value="{{ showJp }}" hint-placeholder-val="{{ true }}"><div style="font-family:'Noto Sans JP',sans-serif;font-size:10px;color:rgba(63,232,255,.55)">ステータス</div></sc-if>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:16px">
+
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="display:grid;grid-template-columns:26px 1fr 34px;gap:8px;align-items:center">
+            <div style="font-size:11px;color:#D24BFF;letter-spacing:.1em">HP</div>
+            <div onClick="{{ onHpClick }}" title="Click to set" style="position:relative;height:13px;background:rgba(11,7,22,.9);border:1px solid rgba(210,75,255,.45);cursor:crosshair;clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%)">
+              <div style="position:absolute;top:0;bottom:0;left:0;width:{{ hp }}%;background:linear-gradient(90deg,#8A2BD9,#D24BFF);box-shadow:0 0 8px rgba(210,75,255,.6)"></div>
+            </div>
+            <div style="font-size:11px;color:#3FE8FF;text-align:right">{{ hp }}</div>
+          </div>
+          <div style="display:grid;grid-template-columns:26px 1fr 34px;gap:8px;align-items:center">
+            <div style="font-size:11px;color:#D24BFF;letter-spacing:.1em">MP</div>
+            <div onClick="{{ onMpClick }}" title="Click to set" style="position:relative;height:13px;background:rgba(11,7,22,.9);border:1px solid rgba(210,75,255,.45);cursor:crosshair;clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%)">
+              <div style="position:absolute;top:0;bottom:0;left:0;width:{{ mp }}%;background:linear-gradient(90deg,#8A2BD9,#3FE8FF);box-shadow:0 0 8px rgba(63,232,255,.55)"></div>
+            </div>
+            <div style="font-size:11px;color:#3FE8FF;text-align:right">{{ mp }}</div>
+          </div>
+          <div style="font-size:9px;color:rgba(242,234,255,.4);letter-spacing:.08em">[SYS] CLICK GAUGE TO SET · HP=PHYSICAL / MP=FOCUS</div>
+        </div>
+
+        <div style="height:1px;background:linear-gradient(90deg,rgba(210,75,255,.5),transparent)"></div>
+
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <div style="font-size:10px;color:#D24BFF;letter-spacing:.2em">CORE STATS</div>
+          <sc-for list="{{ stats }}" as="st" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:46px 1fr 46px;gap:9px;align-items:center">
+              <div>
+                <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:.08em;color:#F2EAFF">{{ st.key }}</div>
+                <div style="font-size:8px;color:rgba(63,232,255,.5);letter-spacing:.04em;white-space:nowrap">{{ st.desc }}</div>
+              </div>
+              <div>
+                <div style="position:relative;height:8px;background:rgba(11,7,22,.9);border:1px solid rgba(210,75,255,.35)">
+                  <div style="position:absolute;top:0;bottom:0;left:0;width:{{ st.pct }}%;background:linear-gradient(90deg,#D24BFF,#3FE8FF);box-shadow:0 0 6px rgba(63,232,255,.5)"></div>
+                </div>
+                <div style="font-size:8px;color:rgba(242,234,255,.4);margin-top:2px">{{ st.xpLabel }}</div>
+              </div>
+              <div style="font-size:11px;color:#3FE8FF;text-align:right">LV {{ st.level }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="height:1px;background:linear-gradient(90deg,rgba(210,75,255,.5),transparent)"></div>
+
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font-size:10px;color:#D24BFF;letter-spacing:.2em">WEIGH-IN LOG</div>
+            <div style="font-size:9px;color:rgba(63,232,255,.55)">BASELINE 200.0 · 2026.04.01</div>
+          </div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+            <div>
+              <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;line-height:1;color:#3FE8FF;text-shadow:0 0 10px rgba(63,232,255,.4)">{{ latestW }}</div>
+              <div style="font-size:9px;color:rgba(242,234,255,.5);margin-top:2px">LBS · Δ {{ deltaW }} FROM BASELINE</div>
+            </div>
+            <svg width="130" height="44" viewBox="0 0 130 44" preserveAspectRatio="none" style="border-bottom:1px solid rgba(210,75,255,.3)">
+              <polyline points="{{ sparkPts }}" fill="none" stroke="#3FE8FF" stroke-width="1.5" style="filter:drop-shadow(0 0 3px rgba(63,232,255,.7))"></polyline>
+              <circle cx="{{ sparkLastX }}" cy="{{ sparkLastY }}" r="2.5" fill="#3FE8FF"></circle>
+            </svg>
+          </div>
+          <div style="display:flex;gap:7px">
+            <input value="{{ wIn }}" onChange="{{ onWIn }}" placeholder="LBS" style="flex:1;min-width:0;background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.4);color:#F2EAFF;font-size:12px;padding:6px 9px;outline:none;letter-spacing:.06em">
+            <button onClick="{{ onWLog }}" style="background:rgba(210,75,255,.14);border:1px solid rgba(210,75,255,.55);color:#3FE8FF;font-size:10px;letter-spacing:.14em;padding:6px 14px;cursor:pointer" style-hover="background:rgba(210,75,255,.3)">LOG</button>
+          </div>
+          <div style="font-size:9px;color:rgba(242,234,255,.4);letter-spacing:.06em">RECOMP ARC · NUTRITION PROTOCOL</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CENTER: QUESTS ── -->
+    <div data-screen-label="QUESTS" style="display:flex;flex-direction:column;background:rgba(22,12,40,0.72);backdrop-filter:blur(8px);border:1px solid rgba(210,75,255,.45);clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);box-shadow:inset 0 0 26px rgba(210,75,255,.06);overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 16px 9px;border-bottom:1px solid rgba(210,75,255,.35)">
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:.2em;color:#D24BFF">QST://QUESTS</div>
+        <sc-if value="{{ showJp }}" hint-placeholder-val="{{ true }}"><div style="font-family:'Noto Sans JP',sans-serif;font-size:10px;color:rgba(63,232,255,.55)">クエスト</div></sc-if>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:18px">
+
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font-size:10px;color:#D24BFF;letter-spacing:.2em">QST://DAILY — RESET 00:00</div>
+            <div style="font-size:10px;color:#3FE8FF">{{ dailyCount }}</div>
+          </div>
+          <sc-for list="{{ dailies }}" as="q" hint-placeholder-count="5">
+            <div style="border:1px solid {{ q.borderCol }};background:rgba(16,9,30,.55);padding:10px 13px;display:flex;flex-direction:column;gap:8px;clip-path:polygon(8px 0,100% 0,100% 100%,0 100%,0 8px)">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="flex:1;font-size:12px;letter-spacing:.05em;color:{{ q.titleColor }}">{{ q.title }}</div>
+                <div style="font-size:9.5px;color:#3FE8FF;border:1px solid rgba(210,75,255,.35);padding:2px 7px;white-space:nowrap">+{{ q.xp }} XP → {{ q.statLabel }}</div>
+              </div>
+              <sc-if value="{{ q.isTrain }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:9px;color:rgba(63,232,255,.6);letter-spacing:.1em">FOCUS:</span>
+                  <input value="{{ q.focus }}" onChange="{{ q.onFocus }}" style="width:120px;background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.3);color:#3FE8FF;font-size:10px;padding:3px 7px;outline:none;letter-spacing:.1em">
+                </div>
+              </sc-if>
+              <sc-if value="{{ q.picking }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:9px;color:rgba(63,232,255,.7);letter-spacing:.1em">[SYS] ROUTE XP:</span>
+                  <button onClick="{{ q.onPickInt }}" style="background:rgba(210,75,255,.14);border:1px solid rgba(210,75,255,.55);color:#3FE8FF;font-size:10px;padding:4px 12px;cursor:pointer;letter-spacing:.12em" style-hover="background:rgba(210,75,255,.32)">→ INT</button>
+                  <button onClick="{{ q.onPickTech }}" style="background:rgba(210,75,255,.14);border:1px solid rgba(210,75,255,.55);color:#3FE8FF;font-size:10px;padding:4px 12px;cursor:pointer;letter-spacing:.12em" style-hover="background:rgba(210,75,255,.32)">→ TECH</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ q.showBtn }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ q.onComplete }}" style="align-self:flex-start;background:none;border:1px solid rgba(210,75,255,.5);color:#D24BFF;font-size:10px;letter-spacing:.18em;padding:5px 16px;cursor:pointer;clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%)" style-hover="background:rgba(210,75,255,.18);color:#3FE8FF">▸ EXECUTE</button>
+              </sc-if>
+              <sc-if value="{{ q.done }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:10px;color:#3FE8FF;letter-spacing:.14em">[COMPLETE] ✓ XP AWARDED</div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="height:1px;background:linear-gradient(90deg,rgba(210,75,255,.5),transparent)"></div>
+
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="font-size:10px;color:#D24BFF;letter-spacing:.2em">QST://SIDE</div>
+          <div style="display:grid;grid-template-columns:1fr 74px 64px 34px;gap:7px">
+            <input value="{{ sideTitle }}" onChange="{{ onSideTitle }}" placeholder="NEW OBJECTIVE…" style="min-width:0;background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.4);color:#F2EAFF;font-size:11px;padding:6px 9px;outline:none">
+            <select value="{{ sideStat }}" onChange="{{ onSideStat }}" style="background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.4);color:#3FE8FF;font-size:10px;padding:5px 4px;outline:none">
+              <option value="VIT">VIT</option><option value="INT">INT</option><option value="TECH">TECH</option><option value="LANG">LANG</option><option value="OPS">OPS</option><option value="WILL">WILL</option>
+            </select>
+            <select value="{{ sideTier }}" onChange="{{ onSideTier }}" style="background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.4);color:#3FE8FF;font-size:10px;padding:5px 4px;outline:none">
+              <option value="10">+10</option><option value="25">+25</option><option value="50">+50</option>
+            </select>
+            <button onClick="{{ onSideAdd }}" style="background:rgba(210,75,255,.14);border:1px solid rgba(210,75,255,.55);color:#3FE8FF;font-size:14px;cursor:pointer;padding:0" style-hover="background:rgba(210,75,255,.3)">+</button>
+          </div>
+          <sc-if value="{{ sidesEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:10px;color:rgba(63,232,255,.45);letter-spacing:.08em;padding:8px 2px">[NOTIFICATION] No active side quests. Awaiting input.</div>
+          </sc-if>
+          <sc-for list="{{ sides }}" as="s" hint-placeholder-count="0">
+            <div style="display:flex;align-items:center;gap:10px;border:1px solid rgba(210,75,255,.22);background:rgba(16,9,30,.45);padding:7px 11px">
+              <button onClick="{{ s.onDone }}" style="width:16px;height:16px;flex:none;background:{{ s.boxBg }};border:1px solid rgba(210,75,255,.6);cursor:pointer;padding:0;color:#08050F;font-size:11px;line-height:1" style-hover="background:rgba(63,232,255,.35)">{{ s.check }}</button>
+              <div style="flex:1;font-size:11.5px;color:{{ s.titleColor }};letter-spacing:.04em">{{ s.title }}</div>
+              <div style="font-size:9px;color:#3FE8FF;border:1px solid rgba(210,75,255,.3);padding:1px 6px">+{{ s.xp }} → {{ s.stat }}</div>
+              <button onClick="{{ s.onDel }}" style="background:none;border:none;color:rgba(63,232,255,.5);font-size:13px;cursor:pointer;padding:0 2px" style-hover="color:#3FE8FF">×</button>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="height:1px;background:linear-gradient(90deg,rgba(210,75,255,.5),transparent)"></div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;padding-bottom:6px">
+          <div style="font-size:10px;color:#D24BFF;letter-spacing:.2em">QST://MAIN — LONG ARC</div>
+          <sc-for list="{{ mains }}" as="m" hint-placeholder-count="4">
+            <div style="border:1px solid rgba(210,75,255,.3);background:rgba(16,9,30,.5);padding:10px 13px;display:flex;flex-direction:column;gap:7px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+                <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:.1em;color:#F2EAFF">{{ m.title }}</div>
+                <div style="font-size:9px;color:rgba(63,232,255,.6);white-space:nowrap">DL: {{ m.deadline }}</div>
+              </div>
+              <div style="font-size:9.5px;color:rgba(63,232,255,.55);letter-spacing:.06em">{{ m.desc }}</div>
+              <div style="display:grid;grid-template-columns:1fr 44px;gap:10px;align-items:center">
+                <div style="position:relative;height:9px;background:rgba(11,7,22,.9);border:1px solid rgba(210,75,255,.35)">
+                  <div style="position:absolute;top:0;bottom:0;left:0;width:{{ m.pct }}%;background:linear-gradient(90deg,#D24BFF,#D24BFF,#3FE8FF);box-shadow:0 0 8px rgba(210,75,255,.55)"></div>
+                </div>
+                <div style="font-size:11px;color:#3FE8FF;text-align:right">{{ m.pct }}%</div>
+              </div>
+              <input type="range" min="0" max="100" step="1" value="{{ m.pct }}" onChange="{{ m.onPct }}" style="width:100%;margin:0;cursor:pointer">
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT: SKILLS ── -->
+    <div data-screen-label="SKILLS" style="display:flex;flex-direction:column;background:rgba(22,12,40,0.72);backdrop-filter:blur(8px);border:1px solid rgba(210,75,255,.45);clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);box-shadow:inset 0 0 26px rgba(210,75,255,.06);overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 16px 9px;border-bottom:1px solid rgba(210,75,255,.35)">
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:.2em;color:#D24BFF">SKL://SKILLS</div>
+        <sc-if value="{{ showJp }}" hint-placeholder-val="{{ true }}"><div style="font-family:'Noto Sans JP',sans-serif;font-size:10px;color:rgba(63,232,255,.55)">スキル</div></sc-if>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:14px">
+
+        <svg width="100%" viewBox="0 0 260 232" style="flex:none">
+          <polygon points="130,30 207.9,75 207.9,165 130,210 52.1,165 52.1,75" fill="none" stroke="rgba(210,75,255,.3)" stroke-width="1"></polygon>
+          <polygon points="130,60 182,90 182,150 130,180 78,150 78,90" fill="none" stroke="rgba(210,75,255,.18)" stroke-width="1"></polygon>
+          <polygon points="130,90 156,105 156,135 130,150 104,135 104,105" fill="none" stroke="rgba(210,75,255,.14)" stroke-width="1"></polygon>
+          <line x1="130" y1="120" x2="130" y2="30" stroke="rgba(210,75,255,.12)"></line>
+          <line x1="130" y1="120" x2="207.9" y2="75" stroke="rgba(210,75,255,.12)"></line>
+          <line x1="130" y1="120" x2="207.9" y2="165" stroke="rgba(210,75,255,.12)"></line>
+          <line x1="130" y1="120" x2="130" y2="210" stroke="rgba(210,75,255,.12)"></line>
+          <line x1="130" y1="120" x2="52.1" y2="165" stroke="rgba(210,75,255,.12)"></line>
+          <line x1="130" y1="120" x2="52.1" y2="75" stroke="rgba(210,75,255,.12)"></line>
+          <polygon points="{{ radarPts }}" fill="rgba(210,75,255,.22)" stroke="#3FE8FF" stroke-width="1.5" style="filter:drop-shadow(0 0 6px rgba(63,232,255,.6))"></polygon>
+          <text x="130" y="20" text-anchor="middle" fill="#3FE8FF" font-size="10" font-family="'Share Tech Mono',monospace">VIT</text>
+          <text x="222" y="72" text-anchor="middle" fill="#3FE8FF" font-size="10" font-family="'Share Tech Mono',monospace">INT</text>
+          <text x="224" y="172" text-anchor="middle" fill="#3FE8FF" font-size="10" font-family="'Share Tech Mono',monospace">TECH</text>
+          <text x="130" y="226" text-anchor="middle" fill="#3FE8FF" font-size="10" font-family="'Share Tech Mono',monospace">LANG</text>
+          <text x="38" y="172" text-anchor="middle" fill="#3FE8FF" font-size="10" font-family="'Share Tech Mono',monospace">OPS</text>
+          <text x="36" y="72" text-anchor="middle" fill="#3FE8FF" font-size="10" font-family="'Share Tech Mono',monospace">WILL</text>
+        </svg>
+
+        <div style="border:1px solid rgba(210,75,255,.35);background:rgba(16,9,30,.55);padding:10px 12px;display:flex;flex-direction:column;gap:8px;clip-path:polygon(8px 0,100% 0,100% 100%,0 100%,0 8px)">
+          <div style="font-size:10px;color:#D24BFF;letter-spacing:.18em">SKL://LOG_TRAINING</div>
+          <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:7px;align-items:center">
+            <select value="{{ trainSkill }}" onChange="{{ onTrainSkill }}" style="min-width:0;background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.4);color:#3FE8FF;font-size:10.5px;padding:6px 5px;outline:none">
+              <sc-for list="{{ skillOpts }}" as="o" hint-placeholder-count="8">
+                <option value="{{ o.id }}">{{ o.name }}</option>
+              </sc-for>
+            </select>
+            <button onClick="{{ onTrainS }}" title="+10 XP" style="background:rgba(210,75,255,.12);border:1px solid rgba(210,75,255,.5);color:#3FE8FF;font-size:10px;padding:6px 11px;cursor:pointer" style-hover="background:rgba(210,75,255,.3)">S</button>
+            <button onClick="{{ onTrainM }}" title="+20 XP" style="background:rgba(210,75,255,.12);border:1px solid rgba(210,75,255,.5);color:#3FE8FF;font-size:10px;padding:6px 11px;cursor:pointer" style-hover="background:rgba(210,75,255,.3)">M</button>
+            <button onClick="{{ onTrainL }}" title="+40 XP" style="background:rgba(210,75,255,.12);border:1px solid rgba(210,75,255,.5);color:#3FE8FF;font-size:10px;padding:6px 11px;cursor:pointer" style-hover="background:rgba(210,75,255,.3)">L</button>
+          </div>
+          <div style="font-size:8.5px;color:rgba(242,234,255,.4);letter-spacing:.06em">S +10 / M +20 / L +40 XP · FEEDS MAPPED CORE STAT</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:9px;padding-bottom:6px">
+          <sc-for list="{{ skills }}" as="sk" hint-placeholder-count="8">
+            <div style="display:grid;grid-template-columns:1fr 44px;gap:9px;align-items:center">
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px">
+                  <div style="font-size:11.5px;color:#F2EAFF;letter-spacing:.06em">{{ sk.name }}</div>
+                  <div style="font-size:8.5px;color:rgba(63,232,255,.55)">→ {{ sk.stat }} · {{ sk.xpLabel }}</div>
+                </div>
+                <div style="position:relative;height:6px;background:rgba(11,7,22,.9);border:1px solid rgba(210,75,255,.3)">
+                  <div style="position:absolute;top:0;bottom:0;left:0;width:{{ sk.pct }}%;background:linear-gradient(90deg,#D24BFF,#3FE8FF)"></div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:#3FE8FF;text-align:right">LV {{ sk.level }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ NOTIFICATION WINDOW ══════════ -->
+  <sc-if value="{{ note }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;top:16%;left:50%;transform:translateX(-50%);z-index:70;min-width:340px;background:rgba(22,12,40,.92);backdrop-filter:blur(10px);border:1px solid #D24BFF;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);animation:notifIn .5s steps(6) both, pulseGlow 1.6s ease-in-out infinite;padding:0">
+      <div style="display:flex;align-items:center;gap:9px;padding:9px 16px;border-bottom:1px solid rgba(210,75,255,.4)">
+        <div style="width:17px;height:17px;border:1.5px solid #3FE8FF;display:flex;align-items:center;justify-content:center;font-size:12px;color:#3FE8FF;flex:none">!</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.28em;color:#3FE8FF;animation:glitchTxt .9s steps(3) 2">NOTIFICATION</div>
+      </div>
+      <div style="padding:13px 18px 15px;display:flex;flex-direction:column;gap:5px">
+        <sc-for list="{{ noteLines }}" as="ln" hint-placeholder-count="1">
+          <div style="font-size:12px;color:#F2EAFF;letter-spacing:.07em">{{ ln.text }}</div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══════════ ASCEND OVERLAY ══════════ -->
+  <sc-if value="{{ ascendVisible }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onAscendClose }}" style="position:fixed;inset:0;z-index:90;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,255,255,.32), rgba(8,5,15,.94) 75%);backdrop-filter:blur(4px);animation:ascendIn .7s steps(8) both">
+      <div style="font-size:11px;color:#FFFFFF;letter-spacing:.5em">SYS://ASCENSION</div>
+      <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:84px;line-height:1;letter-spacing:.12em;color:#F2EAFF;text-shadow:0 0 30px rgba(255,255,255,.9),0 0 70px rgba(255,255,255,.5);animation:glitchTxt 1.1s steps(4) 3">LEVEL UP — {{ ascendLevel }}</div>
+      <div style="width:280px;height:1px;background:linear-gradient(90deg,transparent,#FFFFFF,transparent)"></div>
+      <div style="font-size:11px;color:rgba(242,234,255,.7);letter-spacing:.2em">[SYS] THRESHOLD BREACHED. NEW CAPACITY UNLOCKED.</div>
+      <div style="font-size:9px;color:rgba(255,255,255,.6);letter-spacing:.3em;animation:bootBlink 1.2s step-end infinite">CLICK TO DISMISS</div>
+    </div>
+  </sc-if>
+
+  <!-- ══════════ BOOT SEQUENCE ══════════ -->
+  <sc-if value="{{ bootVisible }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onBootSkip }}" style="animation:{{ bootAnim }};pointer-events:{{ bootPE }};position:fixed;inset:0;z-index:100;background:#08050F;display:flex;align-items:center;justify-content:center;cursor:pointer">
+      <div style="width:460px;display:flex;flex-direction:column;gap:9px">
+        <sc-for list="{{ bootLines }}" as="b" hint-placeholder-count="4">
+          <div style="font-size:13px;letter-spacing:.1em;color:{{ b.color }};opacity:{{ b.op }};text-shadow:0 0 8px rgba(210,75,255,.5)">{{ b.text }}</div>
+        </sc-for>
+        <div style="margin-top:10px;height:2px;background:rgba(210,75,255,.15)">
+          <div style="height:100%;width:{{ bootPct }}%;background:#D24BFF;box-shadow:0 0 8px rgba(210,75,255,.8)"></div>
+        </div>
+        <div style="font-size:9px;color:rgba(63,232,255,.4);letter-spacing:.2em;animation:bootBlink 1s step-end infinite">CLICK TO SKIP</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══════════ SETTINGS DRAWER ══════════ -->
+  <sc-if value="{{ settingsOpen }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="SETTINGS" style="position:fixed;top:0;right:0;bottom:0;width:420px;z-index:80;background:rgba(15,9,28,.97);backdrop-filter:blur(12px);border-left:1px solid #D24BFF;box-shadow:-12px 0 40px rgba(8,5,15,.8);display:flex;flex-direction:column;overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid rgba(210,75,255,.4)">
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:.22em;color:#D24BFF">SYS://CONFIG</div>
+        <button onClick="{{ onSettingsToggle }}" style="background:none;border:1px solid rgba(210,75,255,.4);color:#3FE8FF;font-size:12px;padding:3px 10px;cursor:pointer" style-hover="background:rgba(210,75,255,.2)">×</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:20px">
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:10px;color:#D24BFF;letter-spacing:.2em">IDENTITY // TITLE</div>
+          <input value="{{ titleIn }}" onChange="{{ onTitleChange }}" style="background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.4);color:#F2EAFF;font-size:12px;padding:7px 10px;outline:none;letter-spacing:.06em">
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:10px;color:#D24BFF;letter-spacing:.2em">DAILY QUESTS // TARGETS</div>
+            <button onClick="{{ onAddDaily }}" style="background:rgba(210,75,255,.12);border:1px solid rgba(210,75,255,.5);color:#3FE8FF;font-size:9px;letter-spacing:.1em;padding:4px 10px;cursor:pointer" style-hover="background:rgba(210,75,255,.28)">+ ADD</button>
+          </div>
+          <sc-for list="{{ cfgDailies }}" as="cq" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:1fr 46px 62px 24px;gap:6px;align-items:center">
+              <input value="{{ cq.title }}" onChange="{{ cq.onT }}" style="min-width:0;background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.3);color:#F2EAFF;font-size:10px;padding:5px 8px;outline:none">
+              <input value="{{ cq.xp }}" onChange="{{ cq.onX }}" style="min-width:0;background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.3);color:#3FE8FF;font-size:10px;padding:5px 5px;outline:none;text-align:center">
+              <select value="{{ cq.stat }}" onChange="{{ cq.onS }}" style="background:rgba(11,7,22,.85);border:1px solid rgba(210,75,255,.3);color:#3FE8FF;font-size:9px;padding:4px 2px;outline:none">
+                <option value="VIT">VIT</option><option value="INT">INT</option><option value="TECH">TECH</option><option value="LANG">LANG</option><option value="OPS">OPS</option><option value="WILL">WILL</option><option value="PICK">INT/TECH</option>
+              </select>
+              <button onClick="{{ cq.onDel }}" style="background:none;border:none;color:rgba(63,232,255,.5);font-size:13px;cursor:pointer;padding:0" style-hover="color:#3FE8FF">×</button>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:10px;color:#D24BFF;letter-spacing:.2em">WEIGH-IN LOG // EDIT</div>
+          <sc-for list="{{ cfgWeighins }}" as="w" hint-placeholder-count="1">
+            <div style="display:flex;align-items:center;gap:10px;border:1px solid rgba(210,75,255,.2);padding:5px 10px">
+              <div style="flex:1;font-size:10.5px;color:rgba(242,234,255,.8)">{{ w.date }}</div>
+              <div style="font-size:11px;color:#3FE8FF">{{ w.lbs }} LBS</div>
+              <button onClick="{{ w.onDel }}" style="background:none;border:none;color:rgba(63,232,255,.5);font-size:13px;cursor:pointer;padding:0" style-hover="color:#3FE8FF">×</button>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:10px;color:#D24BFF;letter-spacing:.2em">DATA // PERSISTENCE</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button onClick="{{ onExport }}" style="background:rgba(210,75,255,.12);border:1px solid rgba(210,75,255,.5);color:#3FE8FF;font-size:10px;letter-spacing:.12em;padding:7px 14px;cursor:pointer" style-hover="background:rgba(210,75,255,.28)">EXPORT JSON</button>
+            <button onClick="{{ onImportClick }}" style="background:rgba(210,75,255,.12);border:1px solid rgba(210,75,255,.5);color:#3FE8FF;font-size:10px;letter-spacing:.12em;padding:7px 14px;cursor:pointer" style-hover="background:rgba(210,75,255,.28)">IMPORT JSON</button>
+            <button onClick="{{ onResetDay }}" style="background:none;border:1px solid rgba(210,75,255,.35);color:rgba(63,232,255,.75);font-size:10px;letter-spacing:.12em;padding:7px 14px;cursor:pointer" style-hover="border-color:#D24BFF;color:#3FE8FF">RESET DAY</button>
+          </div>
+          <input type="file" accept=".json,application/json" ref="{{ fileRef }}" onChange="{{ onImportFile }}" style="display:none">
+          <div style="font-size:9px;color:rgba(242,234,255,.4);letter-spacing:.06em">[SYS] All state persists to this device automatically.</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;padding-bottom:10px">
+          <div style="font-size:10px;color:#D24BFF;letter-spacing:.2em">MOTION</div>
+          <button onClick="{{ onRmToggle }}" style="align-self:flex-start;background:rgba(210,75,255,.1);border:1px solid rgba(210,75,255,.45);color:#3FE8FF;font-size:10px;letter-spacing:.12em;padding:7px 14px;cursor:pointer" style-hover="background:rgba(210,75,255,.26)">{{ rmSettingLabel }}</button>
+          <div style="font-size:9px;color:rgba(242,234,255,.4);letter-spacing:.06em">Disables glitch, boot, and pulse effects.</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;scanlines&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;HUD&quot;},
+  &quot;showJapanese&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;HUD&quot;},
+  &quot;bootOnLoad&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;HUD&quot;}
+}">
+class Component extends DCLogic {
+  // ── TUNABLE CONSTANTS ─────────────────────────────
+  KEY = 'wahnahbe.v1';
+  C = {
+    BASE_XP: 100,        // XP to clear level 1
+    CURVE: 1.15,         // threshold growth per level (~15%)
+    WILL_PER_DAILY: 10,  // WILL XP per daily completion
+    TIERS: { S: 10, M: 20, L: 40 },
+    NOTIF_MS: 3000
+  };
+
+  STAT_DESC = { VIT:'BODY', INT:'ACADEMICS·BU', TECH:'CYBERSEC', LANG:'日本語', OPS:'WORK·HUNT', WILL:'CONSISTENCY' };
+  STAT_ORDER = ['VIT','INT','TECH','LANG','OPS','WILL'];
+
+  dayKey(d){ const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
+  thr(l){ return Math.round(this.C.BASE_XP * Math.pow(this.C.CURVE, l-1)); }
+  uid(){ return 'q'+Date.now().toString(36)+Math.floor(Math.random()*999); }
+  fmt(n){ return n.toLocaleString('en-US'); }
+
+  seed(){
+    const h = {}, dones = [5,4,5,3,5,4];
+    for (let i=1;i<=6;i++){ const d=new Date(); d.setDate(d.getDate()-i); h[this.dayKey(d)] = { done:dones[i-1], total:5 }; }
+    return {
+      title:'The Climber', reducedMotion:false,
+      hp:80, mp:70, level:24, xp:1620,
+      stats:{ VIT:{level:12,xp:210}, INT:{level:16,xp:480}, TECH:{level:10,xp:120}, LANG:{level:6,xp:55}, OPS:{level:14,xp:300}, WILL:{level:11,xp:90} },
+      skills:[
+        {id:'py',  name:'PYTHON',      stat:'INT',  level:8, xp:120},
+        {id:'sql', name:'SQL',         stat:'INT',  level:8, xp:190},
+        {id:'viz', name:'DATA VIZ',    stat:'INT',  level:7, xp:80},
+        {id:'ml',  name:'ML MODELING', stat:'INT',  level:5, xp:60},
+        {id:'dkr', name:'DOCKER',      stat:'TECH', level:4, xp:40},
+        {id:'api', name:'FASTAPI',     stat:'TECH', level:4, xp:25},
+        {id:'jp',  name:'日本語',       stat:'LANG', level:3, xp:35},
+        {id:'net', name:'NETRUNNING',  stat:'TECH', level:2, xp:20}
+      ],
+      dailies:[
+        {id:'d1', title:"TRAINING // COMPLETE TODAY'S SESSION", xp:25, stat:'VIT', done:false, kind:'train', focus:'PUSH'},
+        {id:'d2', title:'NUTRITION // HIT MACRO TARGET',   xp:20, stat:'VIT', done:false},
+        {id:'d3', title:'STEPS // 10,000',                       xp:15, stat:'VIT', done:false},
+        {id:'d4', title:'JAPANESE IMMERSION // 30 MIN',          xp:20, stat:'LANG', done:false},
+        {id:'d5', title:'DEEP WORK // 60 MIN — BU OR CYBERSEC',  xp:25, stat:'PICK', done:false}
+      ],
+      sides:[],
+      mains:[
+        {id:'m1', title:'COMMENCEMENT PROTOCOL', desc:'FINISH MS DATA SCIENCE @ BOSTON UNIVERSITY', pct:60, deadline:'DEC 2026'},
+        {id:'m2', title:'OPERATION RISING SUN',  desc:'LONG-ARC CAREER OBJECTIVE',        pct:15, deadline:'2027'},
+        {id:'m3', title:'RECOMP ARC',            desc:'12-MO BODY RECOMPOSITION · APR 2026 BASELINE', pct:28, deadline:'APR 2027'},
+        {id:'m4', title:'NETRUNNER.EXE',         desc:'SHIP THE SQL BATTLE ROYALE GAME',            pct:35, deadline:'OPEN'}
+      ],
+      weighins:[ {date:'2026-04-01', lbs:200.0} ],
+      agenda:[],
+      history:h, lastDay:this.dayKey(new Date())
+    };
+  }
+
+  loadData(){
+    let d = null;
+    try { d = JSON.parse(localStorage.getItem(this.KEY)); } catch(e){}
+    const s = this.seed();
+    d = d ? Object.assign({}, s, d) : s;
+    // midnight reset — casual mode: incomplete quests clear silently, zero penalty
+    const today = this.dayKey(new Date());
+    if (d.lastDay !== today){
+      d.history[d.lastDay] = { done: d.dailies.filter(q=>q.done).length, total: d.dailies.length };
+      d.dailies.forEach(q=>{ q.done=false; });
+      d.lastDay = today;
+      try { localStorage.setItem(this.KEY, JSON.stringify(d)); } catch(e){}
+    }
+    return d;
+  }
+
+  state = (()=>{ const data = this.loadData(); return {
+    data, now:new Date(), boot: data.reducedMotion ? 99 : 0,
+    notes:[], ascend:null, settingsOpen:false, pickingId:null,
+    wIn:'', sideTitle:'', sideStat:'OPS', sideTier:'25', trainSkill:'py',
+    agTitle:'', agTime:'', agDate:'', agType:'SCHOOL'
+  }; })();
+
+  fileRef = React.createRef();
+
+  componentDidMount(){
+    this.clockT = setInterval(()=>this.setState({now:new Date()}), 1000);
+    if (this.state.boot === 0 && (this.props.bootOnLoad ?? true)){
+      [[350,1],[900,2],[1500,3],[2100,4],[2800,5],[3550,99]].forEach(([ms,step])=>{
+        setTimeout(()=>{ if (this.state.boot < 99 && this.state.boot < step) this.setState({boot:step}); else if (step===99 && this.state.boot!==99) this.setState({boot:99}); }, ms);
+      });
+    } else if (this.state.boot === 0) { this.setState({boot:99}); }
+  }
+  componentWillUnmount(){ clearInterval(this.clockT); }
+
+  mut(fn){
+    const data = JSON.parse(JSON.stringify(this.state.data));
+    const out = fn(data);
+    try { localStorage.setItem(this.KEY, JSON.stringify(data)); } catch(e){}
+    this.setState({data});
+    return out;
+  }
+
+  // award XP → stat + overall; returns level-up info
+  award(data, stat, amt){
+    const ups = []; let asc = null;
+    const st = data.stats[stat];
+    if (st){
+      st.xp += amt;
+      while (st.xp >= this.thr(st.level)){ st.xp -= this.thr(st.level); st.level++; ups.push({stat, level:st.level}); }
+    }
+    data.xp += amt;
+    while (data.xp >= this.thr(data.level)){ data.xp -= this.thr(data.level); data.level++; asc = data.level; }
+    return {ups, asc};
+  }
+
+  notify(lines){
+    const id = 'n'+Date.now()+Math.random();
+    this.setState(s=>({notes: s.notes.concat([{id, lines}])}));
+    setTimeout(()=>this.setState(s=>({notes: s.notes.filter(n=>n.id!==id)})), this.C.NOTIF_MS);
+  }
+  afterAward(res){
+    res.ups.forEach(u=> this.notify(['[STAT LEVEL UP] '+u.stat+' → LV '+u.level]));
+    if (res.asc) this.setState({ascend:res.asc});
+  }
+
+  completeDaily(id, pick){
+    const q0 = this.state.data.dailies.find(q=>q.id===id);
+    if (!q0 || q0.done) return;
+    if (q0.stat === 'PICK' && !pick){ this.setState({pickingId:id}); return; }
+    const stat = pick || q0.stat;
+    const res = this.mut(d=>{
+      const q = d.dailies.find(x=>x.id===id); if(!q||q.done) return {ups:[],asc:null};
+      q.done = true;
+      const r1 = this.award(d, stat, q.xp);
+      const r2 = this.award(d, 'WILL', this.C.WILL_PER_DAILY);
+      return { ups: r1.ups.concat(r2.ups), asc: r2.asc || r1.asc };
+    });
+    this.setState({pickingId:null});
+    this.notify(['[QUEST COMPLETE] +'+q0.xp+' XP → '+stat, '[SYS] +'+this.C.WILL_PER_DAILY+' XP → WILL']);
+    this.afterAward(res);
+  }
+
+  completeSide(id){
+    const q0 = this.state.data.sides.find(q=>q.id===id);
+    if (!q0) return;
+    if (q0.done){ this.mut(d=>{ const q=d.sides.find(x=>x.id===id); if(q) q.done=false; }); return; }
+    const res = this.mut(d=>{
+      const q = d.sides.find(x=>x.id===id); if(!q) return {ups:[],asc:null};
+      q.done = true;
+      return this.award(d, q.stat, q.xp);
+    });
+    this.notify(['[SIDE QUEST COMPLETE] +'+q0.xp+' XP → '+q0.stat]);
+    this.afterAward(res);
+  }
+
+  logTraining(size){
+    const amt = this.C.TIERS[size];
+    const sk0 = this.state.data.skills.find(s=>s.id===this.state.trainSkill) || this.state.data.skills[0];
+    let skillUp = null;
+    const res = this.mut(d=>{
+      const sk = d.skills.find(s=>s.id===sk0.id);
+      sk.xp += amt;
+      while (sk.xp >= this.thr(sk.level)){ sk.xp -= this.thr(sk.level); sk.level++; skillUp = sk.level; }
+      return this.award(d, sk.stat, amt);
+    });
+    const lines = ['[TRAINING LOGGED] '+sk0.name+' +'+amt+' XP → '+sk0.stat];
+    if (skillUp) lines.push('[SKILL LEVEL UP] '+sk0.name+' → LV '+skillUp);
+    this.notify(lines);
+    this.afterAward(res);
+  }
+
+  momentum(){
+    const d = this.state.data; let done=0, total=0;
+    for (let i=0;i<7;i++){
+      const dt = new Date(); dt.setDate(dt.getDate()-i);
+      const k = this.dayKey(dt);
+      if (i===0){ done += d.dailies.filter(q=>q.done).length; total += d.dailies.length; }
+      else if (d.history[k]){ done += d.history[k].done; total += d.history[k].total; }
+    }
+    return total ? Math.round(done/total*100) : 0;
+  }
+
+  setGauge(key){
+    return (e)=>{
+      const r = e.currentTarget.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(100, Math.round((e.clientX - r.left) / r.width * 100)));
+      this.mut(d=>{ d[key]=pct; });
+    };
+  }
+
+  renderVals(){
+    const S = this.state, D = S.data, C = this.C;
+    const now = S.now;
+    const days=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+    const p=n=>String(n).padStart(2,'0');
+
+    // header
+    const xpNeed = this.thr(D.level);
+    const mom = this.momentum();
+
+    // stats
+    const stats = this.STAT_ORDER.map(k=>{
+      const st = D.stats[k], need = this.thr(st.level);
+      return { key:k, desc:this.STAT_DESC[k], level:st.level, pct:Math.min(100, Math.round(st.xp/need*100)), xpLabel:this.fmt(st.xp)+'/'+this.fmt(need) };
+    });
+
+    // radar (center 130,120; r 18..90 scaled to max stat level)
+    const maxLv = Math.max(...this.STAT_ORDER.map(k=>D.stats[k].level), 1);
+    const ang = [-90,-30,30,90,150,210];
+    const radarPts = this.STAT_ORDER.map((k,i)=>{
+      const r = 14 + (D.stats[k].level/maxLv)*76;
+      const a = ang[i]*Math.PI/180;
+      return (130 + r*Math.cos(a)).toFixed(1)+','+(120 + r*Math.sin(a)).toFixed(1);
+    }).join(' ');
+
+    // weigh-ins + sparkline
+    const ws = D.weighins.slice().sort((a,b)=>a.date<b.date?-1:1);
+    const last = ws[ws.length-1];
+    const lo = Math.min(...ws.map(w=>w.lbs)), hi = Math.max(...ws.map(w=>w.lbs));
+    const span = Math.max(hi-lo, 1);
+    const pts = ws.map((w,i)=>{
+      const x = ws.length===1 ? 120 : 6 + (i/(ws.length-1))*118;
+      const y = 6 + (1-(w.lbs-lo)/span)*32;
+      return {x:+x.toFixed(1), y:+y.toFixed(1)};
+    });
+    const delta = (last.lbs - 200.0);
+
+    // dailies
+    const dailies = D.dailies.map(q=>({
+      id:q.id, title:q.title, xp:q.xp, done:q.done, focus:q.focus||'',
+      statLabel: q.stat==='PICK' ? 'INT/TECH' : q.stat,
+      isTrain: q.kind==='train' && !q.done,
+      picking: S.pickingId===q.id,
+      showBtn: !q.done && S.pickingId!==q.id,
+      titleColor: q.done ? 'rgba(63,232,255,.45)' : '#F2EAFF',
+      borderCol: q.done ? 'rgba(210,75,255,.18)' : 'rgba(210,75,255,.4)',
+      onComplete: ()=>this.completeDaily(q.id),
+      onPickInt: ()=>this.completeDaily(q.id,'INT'),
+      onPickTech: ()=>this.completeDaily(q.id,'TECH'),
+      onFocus: (e)=>{ const v=e.target.value; this.mut(d=>{ const x=d.dailies.find(y=>y.id===q.id); if(x) x.focus=v; }); }
+    }));
+
+    const sides = D.sides.map(q=>({
+      id:q.id, title:q.title, xp:q.xp, stat:q.stat,
+      check: q.done?'✓':'', boxBg: q.done?'#3FE8FF':'rgba(11,7,22,.9)',
+      titleColor: q.done?'rgba(63,232,255,.4)':'#F2EAFF',
+      onDone: ()=>this.completeSide(q.id),
+      onDel: ()=>this.mut(d=>{ d.sides=d.sides.filter(x=>x.id!==q.id); })
+    }));
+
+    const mains = D.mains.map(m=>({
+      id:m.id, title:m.title, desc:m.desc, deadline:m.deadline, pct:m.pct,
+      onPct:(e)=>{ const v=+e.target.value; this.mut(d=>{ const x=d.mains.find(y=>y.id===m.id); if(x) x.pct=v; }); }
+    }));
+
+    const skills = D.skills.map(sk=>{
+      const need = this.thr(sk.level);
+      return { id:sk.id, name:sk.name, stat:sk.stat, level:sk.level, pct:Math.min(100,Math.round(sk.xp/need*100)), xpLabel:this.fmt(sk.xp)+'/'+this.fmt(need) };
+    });
+
+    // boot
+    const bootTexts = [
+      {t:'SYS://BOOT — INITIALIZING WAHNAHBE PROTOCOL…', c:'#D24BFF'},
+      {t:'LINK ESTABLISHED — PLAYER: GUTIERREZ, J.', c:'#3FE8FF'},
+      {t:'[NOTIFICATION] Daily quests have arrived.', c:'#F2EAFF'},
+      {t:'WELCOME BACK, PLAYER.', c:'#3FE8FF'}
+    ];
+    const bootLines = bootTexts.map((b,i)=>({ text:b.t, color:b.c, op: S.boot>i?1:0 }));
+
+    const note = S.notes[0] || false;
+
+    // agenda
+    const todayK = this.dayKey(now);
+    const AG_COL = {
+      SCHOOL:    {border:'rgba(210,75,255,.5)',  tag:'#D24BFF'},
+      INTERVIEW: {border:'rgba(63,232,255,.65)', tag:'#3FE8FF'},
+      WORK:      {border:'rgba(140,115,190,.5)', tag:'#B9A8E8'},
+      TRAINING:  {border:'rgba(210,75,255,.35)', tag:'#E5A8FF'},
+      OTHER:     {border:'rgba(242,234,255,.3)', tag:'rgba(242,234,255,.7)'}
+    };
+    const agAll = (D.agenda||[]);
+    const agenda = agAll.filter(e=>e.date===todayK).sort((a,b)=>a.time<b.time?-1:1).map(e=>({
+      id:e.id, time:e.time, title:e.title, type:e.type,
+      border:(AG_COL[e.type]||AG_COL.OTHER).border, tagCol:(AG_COL[e.type]||AG_COL.OTHER).tag,
+      onDel:()=>this.mut(d=>{ d.agenda=d.agenda.filter(x=>x.id!==e.id); })
+    }));
+    const agUpcoming = agAll.filter(e=>e.date>todayK).length;
+
+    return {
+      rm: D.reducedMotion ? '1' : '0',
+      scanlines: (this.props.scanlines ?? true) && true,
+      showJp: this.props.showJapanese ?? true,
+      title: D.title, titleIn: D.title,
+      level: D.level,
+      xpPct: Math.min(100, Math.round(D.xp/xpNeed*100)),
+      xpLabel: this.fmt(D.xp)+' / '+this.fmt(xpNeed)+' XP',
+      dateStr: days[now.getDay()]+' '+now.getFullYear()+'.'+p(now.getMonth()+1)+'.'+p(now.getDate()),
+      timeStr: p(now.getHours())+':'+p(now.getMinutes())+':'+p(now.getSeconds()),
+      momentum: mom, momDash: (mom/100*113.1).toFixed(1)+' 113.1',
+      hp: D.hp, mp: D.mp, onHpClick:this.setGauge('hp'), onMpClick:this.setGauge('mp'),
+      stats, radarPts,
+      latestW: last.lbs.toFixed(1),
+      deltaW: (delta>0?'+':'')+delta.toFixed(1),
+      sparkPts: pts.map(q=>q.x+','+q.y).join(' '),
+      sparkLastX: pts[pts.length-1].x, sparkLastY: pts[pts.length-1].y,
+      wIn: S.wIn, onWIn:(e)=>this.setState({wIn:e.target.value}),
+      onWLog: ()=>{
+        const v = parseFloat(S.wIn);
+        if (!isFinite(v) || v<=0){ this.notify(['[SYS] INVALID ENTRY. NUMERIC LBS REQUIRED.']); return; }
+        this.mut(d=>{ d.weighins = d.weighins.filter(w=>w.date!==this.dayKey(new Date())).concat([{date:this.dayKey(new Date()), lbs:+v.toFixed(1)}]); });
+        this.setState({wIn:''});
+        this.notify(['[LOG UPDATED] '+v.toFixed(1)+' LBS RECORDED.']);
+      },
+      dailies, dailyCount: D.dailies.filter(q=>q.done).length+'/'+D.dailies.length+' CLEARED',
+      sides, sidesEmpty: D.sides.length===0,
+      sideTitle:S.sideTitle, onSideTitle:(e)=>this.setState({sideTitle:e.target.value}),
+      sideStat:S.sideStat, onSideStat:(e)=>this.setState({sideStat:e.target.value}),
+      sideTier:S.sideTier, onSideTier:(e)=>this.setState({sideTier:e.target.value}),
+      onSideAdd: ()=>{
+        const t = S.sideTitle.trim(); if(!t) return;
+        this.mut(d=>{ d.sides.push({id:this.uid(), title:t.toUpperCase(), stat:S.sideStat, xp:+S.sideTier, done:false}); });
+        this.setState({sideTitle:''});
+        this.notify(['[NOTIFICATION] Side quest registered.']);
+      },
+      mains, skills,
+      skillOpts: D.skills.map(sk=>({id:sk.id, name:sk.name})),
+      trainSkill:S.trainSkill, onTrainSkill:(e)=>this.setState({trainSkill:e.target.value}),
+      onTrainS:()=>this.logTraining('S'), onTrainM:()=>this.logTraining('M'), onTrainL:()=>this.logTraining('L'),
+      note, noteLines: note ? note.lines.map(t=>({text:t})) : [],
+      agenda, agEmpty: agenda.length===0, agUpcoming: agUpcoming>0 ? agUpcoming : false,
+      agDate: S.agDate || todayK, onAgDate:(e)=>this.setState({agDate:e.target.value}),
+      agTime: S.agTime, onAgTime:(e)=>this.setState({agTime:e.target.value}),
+      agTitle: S.agTitle, onAgTitle:(e)=>this.setState({agTitle:e.target.value}),
+      agType: S.agType, onAgType:(e)=>this.setState({agType:e.target.value}),
+      onAgAdd: ()=>{
+        const t = S.agTitle.trim();
+        if (!t){ this.notify(['[SYS] EVENT NAME REQUIRED.']); return; }
+        const ev = { id:this.uid(), date:S.agDate||todayK, time:S.agTime||'--:--', title:t.toUpperCase(), type:S.agType };
+        this.mut(d=>{ d.agenda=(d.agenda||[]).concat([ev]); });
+        this.setState({agTitle:'', agTime:''});
+        this.notify(['[NOTIFICATION] Event logged — '+ev.title+' · '+ev.date.replace(/-/g,'.')]);
+      },
+      ascendVisible: S.ascend!==null, ascendLevel: S.ascend,
+      onAscendClose: ()=>this.setState({ascend:null}),
+      bootVisible: S.boot < 99, bootLines,
+      bootPct: Math.min(100, S.boot*25),
+      onBootSkip: ()=>{ if (S.boot>=5) return; this.setState({boot:5}); setTimeout(()=>this.setState({boot:99}), 750); },
+      bootAnim: S.boot>=5 ? 'bootOut .7s ease forwards' : 'none',
+      bootPE: S.boot>=5 ? 'none' : 'auto',
+      dashAnim: S.boot>=5 ? 'dashIn .9s cubic-bezier(.2,.7,.3,1) both' : 'none',
+      settingsOpen: S.settingsOpen,
+      onSettingsToggle: ()=>this.setState(s=>({settingsOpen:!s.settingsOpen})),
+      onTitleChange: (e)=>{ const v=e.target.value; this.mut(d=>{ d.title=v; }); },
+      cfgDailies: D.dailies.map(q=>({
+        id:q.id, title:q.title, xp:q.xp, stat:q.stat,
+        onT:(e)=>{ const v=e.target.value; this.mut(d=>{ const x=d.dailies.find(y=>y.id===q.id); if(x) x.title=v; }); },
+        onX:(e)=>{ const v=parseInt(e.target.value)||0; this.mut(d=>{ const x=d.dailies.find(y=>y.id===q.id); if(x) x.xp=v; }); },
+        onS:(e)=>{ const v=e.target.value; this.mut(d=>{ const x=d.dailies.find(y=>y.id===q.id); if(x) x.stat=v; }); },
+        onDel:()=>this.mut(d=>{ d.dailies=d.dailies.filter(x=>x.id!==q.id); })
+      })),
+      onAddDaily: ()=>this.mut(d=>{ d.dailies.push({id:this.uid(), title:'NEW DAILY QUEST', xp:15, stat:'VIT', done:false}); }),
+      cfgWeighins: ws.slice().reverse().map(w=>({
+        date:w.date.replace(/-/g,'.'), lbs:w.lbs.toFixed(1),
+        onDel:()=>this.mut(d=>{ d.weighins=d.weighins.filter(x=>x.date!==w.date); if(d.weighins.length===0) d.weighins.push({date:'2026-04-01',lbs:200.0}); })
+      })),
+      onExport: ()=>{
+        const blob = new Blob([JSON.stringify(D,null,2)], {type:'application/json'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = 'wahnahbe-save.json'; a.click();
+        setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+        this.notify(['[SYS] SAVE DATA EXPORTED.']);
+      },
+      onImportClick: ()=>{ if(this.fileRef.current) this.fileRef.current.click(); },
+      fileRef: this.fileRef,
+      onImportFile: (e)=>{
+        const f = e.target.files && e.target.files[0]; if(!f) return;
+        const r = new FileReader();
+        r.onload = ()=>{
+          try {
+            const d = Object.assign({}, this.seed(), JSON.parse(r.result));
+            localStorage.setItem(this.KEY, JSON.stringify(d));
+            this.setState({data:d});
+            this.notify(['[SYS] SAVE DATA IMPORTED. STATE RESTORED.']);
+          } catch(err){ this.notify(['[SYS] IMPORT FAILED — INVALID FILE.']); }
+        };
+        r.readAsText(f); e.target.value='';
+      },
+      onResetDay: ()=>{ this.mut(d=>{ d.dailies.forEach(q=>{ q.done=false; }); }); this.setState({pickingId:null}); this.notify(['[SYS] DAY RESET. DAILY QUESTS RESTORED.']); },
+      onRmToggle: ()=>this.mut(d=>{ d.reducedMotion=!d.reducedMotion; }),
+      rmLabel: D.reducedMotion ? 'MOTION: REDUCED' : 'MOTION: FULL',
+      rmSettingLabel: D.reducedMotion ? 'REDUCED MOTION: ON' : 'REDUCED MOTION: OFF'
+    };
+  }
+}
+</script>
+</body>
+</html>
