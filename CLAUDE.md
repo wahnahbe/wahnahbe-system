@@ -12,7 +12,7 @@ Spec: docs/superpowers/specs/2026-07-11-wahnahbe-dashboard-design.md. Visual ref
 
 ## State file shapes (second-brain/system/)
 - quests.json: {dailies:[{id,title,xp,stat}], completions:{"YYYY-MM-DD":[ids]}, sides:[{id,title,xp,stat,done,createdAt}], mains:[{id,title,desc,deadline,pct}]}
-- health.json: {hp,mp,baseline:{date,lbs},weighIns:[{date,lbs}]}
+- health.json: {baseline:{date,lbs},weighIns:[{date,lbs}]}
 - agenda.json: {events:[{id,date,time,title,type,source,gcalId?}]} — types SCHOOL|INTERVIEW|WORK|TRAINING|OTHER; source manual|gcal
 - xpLedger.json: {entries:[{ts,amount,stat,reason,source}], crossings:[{level,ts}]}
 - settings.json: {title,scanlines,jpLabels,reducedMotion}
