@@ -46,8 +46,40 @@ describe('parseGradebook', () => {
 });
 
 describe('parseConceptMastery', () => {
-  it('counts mastery bands', () => {
+  it('counts mastery bands and total', () => {
     const r = parseConceptMastery(fx('concept-mastery.md'));
-    expect(r).toEqual({ bands: { solid: 1, forming: 2, shaky: 1 }, total: 4 });
+    expect(r.bands).toEqual({ solid: 1, forming: 2, shaky: 1 });
+    expect(r.total).toBe(4);
+  });
+
+  it('returns the N weakest concepts ascending by score', () => {
+    const r = parseConceptMastery(fx('concept-mastery.md'), 3);
+    expect(r.weakest).toEqual([
+      { name: 'RDD — formal / equation', score: 40, band: 'shaky', lastSeen: '2026-06-01' },
+      { name: 'IV / 2SLS estimator', score: 76, band: 'forming', lastSeen: '2026-06-27' },
+      { name: 'Best-fit line & slope', score: 81, band: 'forming', lastSeen: '2026-06-24' },
+    ]);
+  });
+
+  it('defaults weakestN to 3', () => {
+    const r = parseConceptMastery(fx('concept-mastery.md'));
+    expect(r.weakest).toHaveLength(3);
+  });
+
+  it('returns all rows, ascending, when N exceeds available rows', () => {
+    const r = parseConceptMastery(fx('concept-mastery.md'), 10);
+    expect(r.weakest.map((w) => w.score)).toEqual([40, 76, 81, 83]);
+  });
+
+  it('breaks ties in document order', () => {
+    const md = [
+      '| Concept | Level | Score | Last seen | Notes |',
+      '|---|---|---|---|---|',
+      '| A | solid | 50 | 2026-01-01 | n |',
+      '| B | forming | 50 | 2026-01-02 | n |',
+      '| C | shaky | 20 | 2026-01-03 | n |',
+    ].join('\n');
+    const r = parseConceptMastery(md, 3);
+    expect(r.weakest.map((w) => w.name)).toEqual(['C', 'A', 'B']);
   });
 });

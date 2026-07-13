@@ -6,10 +6,8 @@ import { makeFixtureEnv } from './helpers/fixtureEnv.js';
 let env, app;
 beforeEach(() => { env = makeFixtureEnv(); app = createApp(env.config); });
 
-it('sets gauges with clamping validation', async () => {
-  const res = await request(app).post('/api/health/gauge').send({ hp: 62 });
-  expect(res.body.data.health).toMatchObject({ hp: 62, mp: 100 });
-  expect((await request(app).post('/api/health/gauge').send({ hp: 130 })).status).toBe(400);
+it('returns 404 for the removed gauge route', async () => {
+  expect((await request(app).post('/api/health/gauge').send({ hp: 62 })).status).toBe(404);
 });
 
 it('logs and deletes weigh-ins, kept sorted', async () => {

@@ -7,7 +7,6 @@ import { awardXp } from '../awards.js';
 import { localDateStr } from '../xp.js';
 
 const fail = (res, status, error) => res.status(status).json({ ok: false, error });
-const gauge = z.number().min(0).max(100);
 
 export function stateRouter(config) {
   const r = Router();
@@ -15,12 +14,6 @@ export function stateRouter(config) {
     const cur = readStateFile(config.stateDir, name);
     return writeStateFile(config.stateDir, name, fn(cur));
   };
-
-  r.post('/health/gauge', (req, res) => {
-    const body = z.object({ hp: gauge.optional(), mp: gauge.optional() }).strict().safeParse(req.body);
-    if (!body.success) return fail(res, 400, body.error.message);
-    res.json({ ok: true, data: { health: rw('health', (h) => ({ ...h, ...body.data })) } });
-  });
 
   r.post('/health/weighins', (req, res) => {
     const body = z.object({ lbs: z.number().positive(), date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() }).safeParse(req.body);

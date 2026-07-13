@@ -27,7 +27,9 @@ export function dashboardRouter(config) {
     const reportXp = learning.ok ? learning.data.totalXp : 0;
     const total = totalXp(reportXp, ledger);
     const ledgerXp = total - reportXp;
-    const xp = { total, reportXp, ledgerXp, ...levelInfo(total), ...(learning.ok ? {} : { degraded: true }) };
+    const rawByStat = ledger.entries.reduce((acc, e) => ({ ...acc, [e.stat]: (acc[e.stat] ?? 0) + e.amount }), {});
+    const byStat = Object.fromEntries(Object.entries(rawByStat).filter(([, amount]) => amount !== 0));
+    const xp = { total, reportXp, ledgerXp, byStat, ...levelInfo(total), ...(learning.ok ? {} : { degraded: true }) };
     const today = localDateStr();
 
     res.json({ ok: true, data: {

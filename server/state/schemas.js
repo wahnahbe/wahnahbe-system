@@ -24,7 +24,6 @@ export const schemas = {
     })),
   }),
   health: z.object({
-    hp: z.number().min(0).max(100), mp: z.number().min(0).max(100),
     baseline: z.object({ date: isoDate, lbs: z.number().positive() }),
     weighIns: z.array(z.object({ date: isoDate, lbs: z.number().positive() })),
   }),

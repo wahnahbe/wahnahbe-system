@@ -12,7 +12,6 @@ export const DEFAULTS = {
     completions: {}, sides: [], mains: [],
   },
   health: {
-    hp: 100, mp: 100,
     baseline: { date: '2026-04-01', lbs: 200.0 },
     weighIns: [{ date: '2026-04-01', lbs: 200.0 }],
   },
