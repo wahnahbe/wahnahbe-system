@@ -54,18 +54,20 @@ const learning = { ok: true, data: { stats: [
   { name: 'Retention & Connections', average: 3.6, status: 'Strong' },
 ], totalXp: 249, entries: [] } };
 
+const emptyMastery = { ok: true, data: { bands: { solid: 0, forming: 0, shaky: 0 }, total: 0, weakest: [] } };
+
 it('StatusPanel renders 8 stats and weigh-in delta', () => {
-  const health = { hp: 80, mp: 60, baseline: { date: '2026-04-01', lbs: 200.0 },
+  const health = { baseline: { date: '2026-04-01', lbs: 200.0 },
     weighIns: [{ date: '2026-04-01', lbs: 200.0 }, { date: '2026-07-01', lbs: 194.6 }] };
-  render(<StatusPanel learning={learning} health={health} showJp onGauge={vi.fn()} onLogWeighIn={vi.fn()} />);
+  render(<StatusPanel learning={learning} health={health} mastery={emptyMastery} showJp onLogWeighIn={vi.fn()} />);
   expect(screen.getByText(/Conceptual ·/)).toBeTruthy();
   expect(screen.getByText('194.6')).toBeTruthy();
   expect(screen.getByText(/Δ -5.4 FROM BASELINE/)).toBeTruthy();
 });
 
 it('StatusPanel degrades when report card unreadable', () => {
-  const health = { hp: 80, mp: 60, baseline: { date: '2026-04-01', lbs: 200.0 }, weighIns: [] };
-  render(<StatusPanel learning={{ ok: false, error: 'x' }} health={health} showJp onGauge={vi.fn()} onLogWeighIn={vi.fn()} />);
+  const health = { baseline: { date: '2026-04-01', lbs: 200.0 }, weighIns: [] };
+  render(<StatusPanel learning={{ ok: false, error: 'x' }} health={health} mastery={emptyMastery} showJp onLogWeighIn={vi.fn()} />);
   expect(screen.getByText(/DATA LINK LOST/)).toBeTruthy();
 });
 
@@ -76,11 +78,59 @@ it('sparkPath scales points into the viewbox', () => {
 });
 
 it('StatusPanel stat bars render with flat design variant', () => {
-  const health = { hp: 80, mp: 60, baseline: { date: '2026-04-01', lbs: 200.0 },
+  const health = { baseline: { date: '2026-04-01', lbs: 200.0 },
     weighIns: [{ date: '2026-04-01', lbs: 200.0 }, { date: '2026-07-01', lbs: 194.6 }] };
-  const { container } = render(<StatusPanel learning={learning} health={health} showJp onGauge={vi.fn()} onLogWeighIn={vi.fn()} />);
+  const { container } = render(<StatusPanel learning={learning} health={health} mastery={emptyMastery} showJp onLogWeighIn={vi.fn()} />);
   const flatBars = container.querySelectorAll('[data-flat="1"]');
   expect(flatBars).toHaveLength(8);
+});
+
+it('StatusPanel MasteryBlock renders bands, review queue, and a STALE tag for old concepts', () => {
+  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.setSystemTime(new Date('2026-07-11'));
+  try {
+    const health = { baseline: { date: '2026-04-01', lbs: 200.0 }, weighIns: [] };
+    const mastery = { ok: true, data: {
+      bands: { solid: 2, forming: 3, shaky: 1 }, total: 6,
+      weakest: [
+        { name: 'RDD — formal / equation', score: 40, band: 'shaky', lastSeen: '2026-06-01' }, // 40d ago -> stale
+        { name: 'IV / 2SLS estimator', score: 76, band: 'forming', lastSeen: '2026-07-05' }, // 6d ago -> fresh
+      ],
+    } };
+    render(<StatusPanel learning={learning} health={health} mastery={mastery} showJp onLogWeighIn={vi.fn()} />);
+    expect(screen.getByText('MEM://MASTERY')).toBeTruthy();
+    expect(screen.getByText(/SOLID 2/)).toBeTruthy();
+    expect(screen.getByText(/FORMING 3/)).toBeTruthy();
+    expect(screen.getByText(/SHAKY 1/)).toBeTruthy();
+    expect(screen.getByText('REVIEW QUEUE:')).toBeTruthy();
+    expect(screen.getByText(/RDD — formal \/ equation · 40/)).toBeTruthy();
+    expect(screen.getByText(/IV \/ 2SLS estimator · 76/)).toBeTruthy();
+    expect(screen.getByText('STALE')).toBeTruthy();
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+it('StatusPanel MasteryBlock degrades independently when concept mastery is unreadable', () => {
+  const health = { baseline: { date: '2026-04-01', lbs: 200.0 }, weighIns: [] };
+  render(<StatusPanel learning={learning} health={health} mastery={{ ok: false, error: 'x' }} showJp onLogWeighIn={vi.fn()} />);
+  expect(screen.getByText(/DATA LINK LOST — CONCEPT MASTERY/)).toBeTruthy();
+  expect(screen.getByText(/Conceptual ·/)).toBeTruthy(); // rest of the panel still renders
+});
+
+it('StatusPanel stat rows show XP mileage and a GENERAL mileage footer, omitting zero stats', () => {
+  const health = { baseline: { date: '2026-04-01', lbs: 200.0 }, weighIns: [] };
+  const byStat = { Conceptual: 30, GENERAL: 15 };
+  render(<StatusPanel learning={learning} health={health} mastery={emptyMastery} byStat={byStat} showJp onLogWeighIn={vi.fn()} />);
+  expect(screen.getByText('+30xp')).toBeTruthy();
+  expect(screen.getByText(/GENERAL MILEAGE · \+15 XP/)).toBeTruthy();
+  expect(screen.queryByText(/^\+0xp$/)).toBeNull();
+});
+
+it('StatusPanel omits the GENERAL mileage footer when there is no GENERAL mileage', () => {
+  const health = { baseline: { date: '2026-04-01', lbs: 200.0 }, weighIns: [] };
+  render(<StatusPanel learning={learning} health={health} mastery={emptyMastery} byStat={{}} showJp onLogWeighIn={vi.fn()} />);
+  expect(screen.queryByText(/GENERAL MILEAGE/)).toBeNull();
 });
 
 const quests = {
@@ -171,7 +221,7 @@ it('App renders all panels from dashboard data (boot skipped via reducedMotion)'
     activity: { ok: true, data: [] },
     tutor: { gradebook: { ok: true, data: [] }, mastery: { ok: true, data: { bands: { solid: 0, forming: 0, shaky: 0 }, total: 0 } } },
     quests: { dailies: [], completions: {}, sides: [], mains: [] },
-    health: { hp: 100, mp: 100, baseline: { date: '2026-04-01', lbs: 200.0 }, weighIns: [] },
+    health: { baseline: { date: '2026-04-01', lbs: 200.0 }, weighIns: [] },
     agenda: { events: [] },
     settings: { title: 'THE OPERATOR', scanlines: true, jpLabels: true, reducedMotion: true },
     xp: { total: 249, reportXp: 249, ledgerXp: 0, level: 4, name: 'Engineer', xpIntoLevel: 9, xpForNext: 160, pct: 6 },
@@ -191,7 +241,7 @@ it('App shows the amount actually just earned after a training click, not the li
     activity: { ok: true, data: [] },
     tutor: { gradebook: { ok: true, data: [] }, mastery: { ok: true, data: { bands: { solid: 0, forming: 0, shaky: 0 }, total: 0 } } },
     quests: { dailies: [], completions: {}, sides: [], mains: [] },
-    health: { hp: 100, mp: 100, baseline: { date: '2026-04-01', lbs: 200.0 }, weighIns: [] },
+    health: { baseline: { date: '2026-04-01', lbs: 200.0 }, weighIns: [] },
     agenda: { events: [] },
     settings: { title: 'THE OPERATOR', scanlines: true, jpLabels: true, reducedMotion: true },
     xp: { total: 249, reportXp: 249, ledgerXp: 0, level: 4, name: 'Engineer', xpIntoLevel: 9, xpForNext: 160, pct: 6 },

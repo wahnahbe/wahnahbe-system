@@ -79,8 +79,8 @@ export default function App() {
         display: 'grid', gridTemplateColumns: '335px 1fr 355px', gap: 14, padding: 14,
         height: 'calc(100vh - 176px)', boxSizing: 'border-box',
       }}>
-        <StatusPanel learning={data.learning} health={data.health} showJp={settings.jpLabels}
-          onGauge={(g) => run('POST', '/health/gauge', g)}
+        <StatusPanel learning={data.learning} health={data.health} mastery={data.tutor.mastery}
+          byStat={data.xp.byStat} showJp={settings.jpLabels}
           onLogWeighIn={(lbs) => run('POST', '/health/weighins', { lbs }, ['[SYS] WEIGH-IN LOGGED'])} />
         <QuestsPanel quests={data.quests} today={data.today} showJp={settings.jpLabels}
           onCompleteDaily={(id) => run('POST', `/quests/daily/${id}/complete`)}
