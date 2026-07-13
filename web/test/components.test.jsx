@@ -133,6 +133,14 @@ it('StatusPanel omits the GENERAL mileage footer when there is no GENERAL mileag
   expect(screen.queryByText(/GENERAL MILEAGE/)).toBeNull();
 });
 
+it('StatusPanel does not render mileage artifacts for negative byStat values', () => {
+  const health = { baseline: { date: '2026-04-01', lbs: 200.0 }, weighIns: [] };
+  const byStat = { Conceptual: -5, GENERAL: -10 };
+  render(<StatusPanel learning={learning} health={health} mastery={emptyMastery} byStat={byStat} showJp onLogWeighIn={vi.fn()} />);
+  expect(screen.queryByText(/\+-/)).toBeNull();
+  expect(screen.queryByText(/GENERAL MILEAGE/)).toBeNull();
+});
+
 const quests = {
   dailies: [{ id: 'd1', title: 'TRAINING', xp: 15, stat: 'GENERAL' }],
   completions: { '2026-07-11': ['d1'] },

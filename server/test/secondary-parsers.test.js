@@ -82,4 +82,20 @@ describe('parseConceptMastery', () => {
     const r = parseConceptMastery(md, 3);
     expect(r.weakest.map((w) => w.name)).toEqual(['C', 'A', 'B']);
   });
+
+  it('counts a malformed row (bad score/date) toward bands/total but excludes it from weakest', () => {
+    const md = [
+      '| Concept | Level | Score | Last seen | Notes |',
+      '|---|---|---|---|---|',
+      '| A | solid | 90 | 2026-01-01 | n |',
+      '| B | forming | 70 | 2026-01-02 | n |',
+      '| C | shaky | 40 | 2026-01-03 | n |',
+      '| D | shaky | ?? | | n |',
+    ].join('\n');
+    const r = parseConceptMastery(md, 10);
+    expect(r.bands).toEqual({ solid: 1, forming: 1, shaky: 2 });
+    expect(r.total).toBe(4);
+    expect(r.weakest.map((w) => w.name)).toEqual(['C', 'B', 'A']);
+    expect(r.weakest).toHaveLength(3);
+  });
 });

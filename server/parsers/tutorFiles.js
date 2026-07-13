@@ -12,15 +12,16 @@ export function parseGradebook(md, n = 5) {
  */
 export function parseConceptMastery(md, weakestN = 3) {
   const bands = { solid: 0, forming: 0, shaky: 0 };
+  for (const m of md.matchAll(/^\|[^|]+\|\s*(solid|forming|shaky)\s*\|/gm)) bands[m[1]] += 1;
+  const total = bands.solid + bands.forming + bands.shaky;
+  if (total === 0) throw new Error('no mastery rows found');
+
   const rows = [];
   const rowPattern = /^\|\s*([^|]+?)\s*\|\s*(solid|forming|shaky)\s*\|\s*(\d+)\s*\|\s*(\d{4}-\d{2}-\d{2})\s*\|/gm;
   for (const m of md.matchAll(rowPattern)) {
     const [, name, band, score, lastSeen] = m;
-    bands[band] += 1;
     rows.push({ name, score: Number(score), band, lastSeen });
   }
-  const total = bands.solid + bands.forming + bands.shaky;
-  if (total === 0) throw new Error('no mastery rows found');
   const weakest = [...rows].sort((a, b) => a.score - b.score).slice(0, weakestN);
   return { bands, total, weakest };
 }
