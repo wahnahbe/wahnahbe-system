@@ -63,7 +63,7 @@ One GSAP master timeline on ascension: backdrop snap → rank name **scramble-de
 ## 5. Mechanics & testing
 
 - **Deps:** `gsap` (^3.13), `ogl` — both in web workspace only. FX modules lazy-imported.
-- **Server tests:** levelInfo boundaries (559/560, 1649/1650, 2099/2100 ★2), procedural width math, name generation, thresholdFor/levelInfo consistency, no-MAX-branch (levelInfo(454) → level 5, xpForNext 160, pct 33).
+- **Server tests:** levelInfo boundaries (559/560, 1649/1650, 2099/2100 ★2), procedural width math, name generation, thresholdFor/levelInfo consistency, no-MAX-branch (levelInfo(454) → level 5, xpForNext 160, pct 34).
 - **Web tests:** rankTheme lookup table (insignia/accent/fx per band incl. ★ tiers), useRankFx gating (reducedMotion off, fxRank off, level thresholds — mock the dynamic imports), settings schema default, drawer toggle render. Visual/GSAP internals are NOT unit-tested — verified by browser smoke.
 - **E2E:** fixture vault stays at 249 XP (level 4) so text-mutating FX (decode, level 5) never runs during assertions; existing assertions unaffected. One new assertion: header shows the rank insignia SVG (`data-testid="rank-insignia"`).
 - **Browser smoke (manual, staged):** demo vault at three XP seeds — level 5 (decode), level 8 (spectral+rain), level 12 (aurora ★3) — screenshot each, verify perf (no long tasks > 50ms sustained; aurora ≤ ~2ms/frame at half-res).
