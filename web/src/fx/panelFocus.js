@@ -5,8 +5,10 @@ const DURATION = 0.35;
 const EASE = 'expo.out';
 
 let boundRoot = null;
-let onEnter = null;
-let onLeave = null;
+let onOver = null;
+let onOut = null;
+let current = null;
+let active = false;
 
 function focusIn(panel) {
   gsap.to(panel, {
@@ -30,36 +32,50 @@ function focusOut(panel) {
 
 /**
  * Delegated hover glow for `[data-fx-panel]` roots (header ticker, agenda
- * strip, and the three column panels). Delegation on `root` in the capture
- * phase means it survives React re-renders that replace panel DOM nodes —
- * mouseenter/mouseleave don't bubble, but capture-phase listeners still see
- * them on the way down, so no re-binding is needed after a refresh.
+ * strip, and the three column panels). Uses bubbling `pointerover`/
+ * `pointerout` delegation on `root` rather than capture-phase mouseenter/
+ * mouseleave: mouseenter/leave fire once per descendant boundary crossed
+ * (every nested element inside a panel re-triggers them), which flickered
+ * the glow as the pointer moved over children. `pointerover`/`pointerout`
+ * bubble, so a single delegated pair plus `closest()` resolution and a
+ * `current` panel tracker treats the whole panel as one hover region and
+ * only transitions focus when the pointer actually crosses a panel
+ * boundary, not a child boundary.
  * @param {{ root: Document }} ctx
  */
 export function mount(ctx) {
+  if (active) return;
   const root = ctx?.root ?? document;
-  if (onEnter) return; // idempotent
 
-  onEnter = (e) => {
+  onOver = (e) => {
     const panel = e.target.closest?.(PANEL_SELECTOR);
-    if (panel) focusIn(panel);
+    if (!panel || panel === current) return;
+    if (current) focusOut(current);
+    focusIn(panel);
+    current = panel;
   };
-  onLeave = (e) => {
+  onOut = (e) => {
     const panel = e.target.closest?.(PANEL_SELECTOR);
-    if (panel) focusOut(panel);
+    if (!panel || panel.contains(e.relatedTarget)) return;
+    focusOut(panel);
+    current = null;
   };
 
-  root.addEventListener('mouseenter', onEnter, true);
-  root.addEventListener('mouseleave', onLeave, true);
+  root.addEventListener('pointerover', onOver);
+  root.addEventListener('pointerout', onOut);
   boundRoot = root;
+  active = true;
 }
 
 export function unmount() {
-  if (!onEnter) return;
-  boundRoot.removeEventListener('mouseenter', onEnter, true);
-  boundRoot.removeEventListener('mouseleave', onLeave, true);
+  if (!active) return;
+  boundRoot.removeEventListener('pointerover', onOver);
+  boundRoot.removeEventListener('pointerout', onOut);
   gsap.killTweensOf(PANEL_SELECTOR);
-  onEnter = null;
-  onLeave = null;
+  gsap.set(PANEL_SELECTOR, { clearProps: 'all' });
+  onOver = null;
+  onOut = null;
   boundRoot = null;
+  current = null;
+  active = false;
 }

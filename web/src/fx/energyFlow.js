@@ -5,6 +5,7 @@ const SWEEP_WIDTH = 40;
 
 let sweepEl = null;
 let tween = null;
+let active = false;
 
 /**
  * Adds a light-sweep overlay to the header XP bar track, looping indefinitely.
@@ -14,10 +15,12 @@ let tween = null;
  * @param {{ root: Document }} ctx
  */
 export function mount(ctx) {
+  if (active) return;
   const root = ctx?.root ?? document;
   const track = root.querySelector(TRACK_SELECTOR);
-  if (!track || sweepEl) return;
+  if (!track) return;
 
+  active = true;
   const sweep = document.createElement('div');
   sweep.className = 'fx-sweep';
   Object.assign(sweep.style, {
@@ -39,8 +42,10 @@ export function mount(ctx) {
 }
 
 export function unmount() {
+  if (!active) return;
   tween?.kill();
   tween = null;
   sweepEl?.remove();
   sweepEl = null;
+  active = false;
 }

@@ -1,7 +1,7 @@
 import { it, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, waitFor } from '@testing-library/react';
 import React from 'react';
-import { useRankFx } from '../src/hooks/useRankFx.js';
+import { useRankFx, createUseRankFx } from '../src/hooks/useRankFx.js';
 
 afterEach(cleanup);
 
@@ -59,4 +59,39 @@ it('unmounts everything when settings flip fxRank off', async () => {
   await waitFor(() => expect(mounted.length).toBe(3));
   rerender(<Harness level={4} settings={{ reducedMotion: false, fxRank: false }} />);
   await waitFor(() => expect(mounted).toEqual([]));
+});
+
+it('never mounts a module whose import resolves after the gate flips off mid-flight', async () => {
+  // Regression test for the stale-async-mount race: the hook's effect
+  // cleanup sets `cancelled = true` synchronously on unmount/re-run, but a
+  // dynamic import already in flight only checks that flag *after* it
+  // resolves. Uses createUseRankFx to inject a manually-resolvable loader
+  // for panelFocus (the only fx unlocked at level 2) instead of the static
+  // FX_MODULES map, so the promise can be held open across the gate flip.
+  let resolveLoader;
+  const pending = new Promise((resolve) => {
+    resolveLoader = resolve;
+  });
+  const mountSpy = vi.fn();
+  const unmountSpy = vi.fn();
+  const useInjectedRankFx = createUseRankFx({ panelFocus: () => pending });
+
+  function InjectedHarness({ level, settings }) {
+    useInjectedRankFx(level, settings);
+    return null;
+  }
+
+  const { rerender } = render(
+    <InjectedHarness level={2} settings={{ reducedMotion: false, fxRank: true }} />
+  );
+
+  // Flip the gate off while the panelFocus import is still pending — this
+  // runs the effect cleanup (cancelled = true) before the import settles.
+  rerender(<InjectedHarness level={2} settings={{ reducedMotion: false, fxRank: false }} />);
+
+  resolveLoader({ mount: mountSpy, unmount: unmountSpy });
+  await pending;
+  await waitFor(() => {}); // let the hook's post-await continuation run
+
+  expect(mountSpy).not.toHaveBeenCalled();
 });

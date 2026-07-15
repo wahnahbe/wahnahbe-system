@@ -21,4 +21,4 @@ Spec: docs/superpowers/specs/2026-07-11-wahnahbe-dashboard-design.md. Visual ref
 
 ## Dev
 - `npm run dev` (server, :4777) + `npm run dev --workspace=web` (Vite, :5173). Tests: `npm test`. E2E: `npm run e2e`.
-- `npm run e2e` rebuilds `web/dist`, which the LIVE server serves per-request — run e2e from an isolated git worktree (or stop the WahnahbeSystem task first) to avoid live-serving an unreviewed build.
+- `npm run e2e` rebuilds `web/dist`, which the LIVE server serves per-request — run e2e from an isolated git worktree (or stop the WahnahbeSystem task first) to avoid live-serving an unreviewed build. Same applies to any `npm run build` — build only from main (matching the deployed code) or in an isolated worktree.
