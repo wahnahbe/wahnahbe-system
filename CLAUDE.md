@@ -15,8 +15,9 @@ Spec: docs/superpowers/specs/2026-07-11-wahnahbe-dashboard-design.md. Visual ref
 - health.json: {baseline:{date,lbs},weighIns:[{date,lbs}]}
 - agenda.json: {events:[{id,date,time,title,type,source,gcalId?}]} — types SCHOOL|INTERVIEW|WORK|TRAINING|OTHER; source manual|gcal
 - xpLedger.json: {entries:[{ts,amount,stat,reason,source}], crossings:[{level,ts}]}
-- settings.json: {title,scanlines,jpLabels,reducedMotion}
+- settings.json: {title,scanlines,jpLabels,reducedMotion,fxRank}
 - `stat` values: the 8 report-card stat names verbatim, or GENERAL.
+- Levels are uncapped: the dashboard subdivides the report card's open "400+" band into named ranks (server/xp.js), never contradicting the vault.
 
 ## Dev
 - `npm run dev` (server, :4777) + `npm run dev --workspace=web` (Vite, :5173). Tests: `npm test`. E2E: `npm run e2e`.

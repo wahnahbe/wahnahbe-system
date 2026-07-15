@@ -9,6 +9,8 @@ import { QuestsPanel } from '../src/components/QuestsPanel.jsx';
 import { SkillsPanel } from '../src/components/SkillsPanel.jsx';
 import { radarPoints } from '../src/components/Radar.jsx';
 import { SettingsDrawer } from '../src/components/SettingsDrawer.jsx';
+import { rankTheme } from '../src/rankTheme.js';
+import { RankInsignia } from '../src/components/RankInsignia.jsx';
 import App from '../src/App.jsx';
 
 afterEach(cleanup);
@@ -22,6 +24,31 @@ it('HeaderTicker shows level, xp label, title', () => {
   expect(screen.getByText('WAHNAHBE')).toBeTruthy();
   expect(screen.getByText('4')).toBeTruthy();
   expect(screen.getByText(/9 \/ 160 XP/)).toBeTruthy();
+});
+
+it('rankTheme accumulates fx and assigns accent tiers', () => {
+  expect(rankTheme(1).fx).toEqual([]);
+  expect(rankTheme(4).fx).toEqual(['panelFocus', 'energyFlow', 'ringDraw']);
+  expect(rankTheme(10).fx).toHaveLength(9);
+  expect(rankTheme(14).fx).toHaveLength(9);          // star tiers add no new fx
+  expect(rankTheme(5).accentTier).toBe('base');
+  expect(rankTheme(7).accentTier).toBe('violet');
+  expect(rankTheme(8).accentTier).toBe('spectral');
+  expect(rankTheme(9).accentTier).toBe('gilded');
+  expect(rankTheme(12).accentTier).toBe('monarch');
+});
+
+it('RankInsignia renders an svg with a star badge past level 10', () => {
+  const { container, rerender } = render(<RankInsignia level={4} size={18} />);
+  expect(container.querySelector('[data-testid="rank-insignia"]')).toBeTruthy();
+  rerender(<RankInsignia level={12} size={18} />);
+  expect(screen.getByText('★3')).toBeTruthy();
+});
+
+it('HeaderTicker shows the rank insignia', () => {
+  render(<HeaderTicker xp={xp} momentum={21} settings={settings}
+    onOpenSettings={() => {}} onToggleMotion={() => {}} />);
+  expect(document.querySelector('[data-testid="rank-insignia"]')).toBeTruthy();
 });
 
 it('AgendaStrip shows empty state and upcoming count', () => {

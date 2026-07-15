@@ -17,7 +17,7 @@ export const DEFAULTS = {
   },
   agenda: { events: [] },
   xpLedger: { entries: [], crossings: [] },
-  settings: { title: 'THE OPERATOR', scanlines: true, jpLabels: true, reducedMotion: false },
+  settings: { title: 'THE OPERATOR', scanlines: true, jpLabels: true, reducedMotion: false, fxRank: true },
 };
 
 const fileOf = (dir, name) => path.join(dir, `${name}.json`);

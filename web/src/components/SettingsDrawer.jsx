@@ -52,7 +52,7 @@ function DailyRowEditor({ row, onChange, onRemove }) {
  *
  * @param {{
  *   open: boolean,
- *   settings: { title: string, scanlines: boolean, jpLabels: boolean, reducedMotion: boolean },
+ *   settings: { title: string, scanlines: boolean, jpLabels: boolean, reducedMotion: boolean, fxRank: boolean },
  *   quests: { dailies: DailyRow[] },
  *   health: { weighIns: { date: string, lbs: number }[] },
  *   fullData: unknown,
@@ -246,6 +246,13 @@ export function SettingsDrawer({
           </label>
           <div style={{ fontSize: 9, color: 'rgba(242,234,255,.4)', letterSpacing: '.06em' }}>
             Reduced motion disables glitch, boot, and pulse effects.
+          </div>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10.5, color: C.text, letterSpacing: '.06em' }}>
+            <input type="checkbox" checked={!!settings.fxRank} onChange={toggleSetting('fxRank')} />
+            FX://RANK
+          </label>
+          <div style={{ fontSize: 9, color: 'rgba(242,234,255,.4)', letterSpacing: '.06em' }}>
+            Disables rank-unlocked page effects (insignia + accents still show).
           </div>
         </div>
       </div>

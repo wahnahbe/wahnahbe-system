@@ -25,6 +25,7 @@ test('boots, renders real data, completes a daily, live-updates on vault edit', 
   // also matches the boot overlay's kernel line above, making it ambiguous while the
   // overlay is still mounted; exact match only matches the header wordmark itself.
   await expect(page.getByText('WAHNAHBE', { exact: true })).toBeVisible();
+  await expect(page.locator('[data-testid="rank-insignia"]')).toBeVisible();
 
   // Renders real fixture data: learning-report-card.md has Total XP 249,
   // which levelInfo() resolves to level 4, 9 XP into level, 160 to next —

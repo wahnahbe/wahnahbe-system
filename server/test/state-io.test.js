@@ -37,4 +37,8 @@ describe('state io', () => {
     fs.writeFileSync(path.join(dir, 'health.json'), '{ not json');
     expect(() => readStateFile(dir, 'health')).toThrow(/invalid JSON in health/);
   });
+
+  it('defaults settings.fxRank to true', () => {
+    expect(readStateFile(dir, 'settings').fxRank).toBe(true);
+  });
 });

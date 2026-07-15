@@ -45,5 +45,7 @@ export const schemas = {
   settings: z.object({
     title: z.string(),
     scanlines: z.boolean(), jpLabels: z.boolean(), reducedMotion: z.boolean(),
+    // .default() so the live settings.json (written before this key existed) still parses.
+    fxRank: z.boolean().default(true),
   }),
 };

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { C, fonts, clip } from '../theme.js';
 import { Bar } from './bits.jsx';
+import { rankTheme } from '../rankTheme.js';
+import { RankInsignia } from './RankInsignia.jsx';
 
 const MOMENTUM_R = 18;
 const MOMENTUM_CIRCUMFERENCE = 113; // 2 * PI * 18, rounded per design spec
@@ -26,7 +28,7 @@ function formatTime(d) {
 /**
  * Top HUD bar: wordmark, level/XP, live clock + momentum ring, settings/motion controls.
  * @param {{
- *   xp: { level: number, xpIntoLevel: number, xpForNext: number|null, pct: number },
+ *   xp: { level: number, xpIntoLevel: number, xpForNext: number, pct: number },
  *   momentum: number,
  *   settings: { title: string, reducedMotion: boolean },
  *   onOpenSettings: () => void,
@@ -41,8 +43,9 @@ export function HeaderTicker({ xp, momentum, settings, onOpenSettings, onToggleM
     return () => clearInterval(id);
   }, []);
 
-  const xpLabel = xp.xpForNext == null ? 'MAX' : `${xp.xpIntoLevel} / ${xp.xpForNext} XP`;
+  const xpLabel = `${xp.xpIntoLevel} / ${xp.xpForNext} XP`;
   const momDash = `${(momentum / 100) * MOMENTUM_CIRCUMFERENCE} ${MOMENTUM_CIRCUMFERENCE}`;
+  const { accent } = rankTheme(xp.level);
 
   return (
     <div style={{
@@ -74,14 +77,15 @@ export function HeaderTicker({ xp, momentum, settings, onOpenSettings, onToggleM
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
             <span style={{ fontSize: 10, color: C.mag, letterSpacing: '.18em' }}>LEVEL</span>
+            <RankInsignia level={xp.level} size={18} color={accent.numColor} />
             <span style={{
-              fontFamily: fonts.display, fontWeight: 700, fontSize: 30, lineHeight: 1, color: C.cyan,
-              textShadow: '0 0 12px rgba(63,232,255,.5)',
+              fontFamily: fonts.display, fontWeight: 700, fontSize: 30, lineHeight: 1, color: accent.numColor,
+              textShadow: accent.numGlow,
             }}>{xp.level}</span>
           </div>
           <div style={{ fontSize: 10, color: 'rgba(242,234,255,.55)', letterSpacing: '.08em' }}>{xpLabel}</div>
         </div>
-        <Bar pct={xp.pct} />
+        <Bar pct={xp.pct} grad={accent.barGrad} />
       </div>
 
       <div style={{
