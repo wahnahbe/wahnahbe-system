@@ -15,13 +15,15 @@ export const SectionTitle = ({ children, jp, showJp }) => (
 
 /**
  * HUD progress bar. Renders angled (clipped) by default, or flat (square
- * ends) when `flat` is set.
- * @param {{ pct: number, grad?: string, h?: number, flat?: boolean }} props
+ * ends) when `flat` is set. `trackAttrs` spreads onto the outer (track)
+ * element — used by HeaderTicker to tag the XP bar for fx hooking without
+ * every Bar instance picking up that hook.
+ * @param {{ pct: number, grad?: string, h?: number, flat?: boolean, trackAttrs?: object }} props
  */
-export const Bar = ({ pct, grad = `linear-gradient(90deg,#7A1FBF,${C.mag} 60%,${C.cyan})`, h = 9, flat = false }) => {
+export const Bar = ({ pct, grad = `linear-gradient(90deg,#7A1FBF,${C.mag} 60%,${C.cyan})`, h = 9, flat = false, trackAttrs = {} }) => {
   const fillProps = flat ? { 'data-flat': '1' } : {};
   return (
-    <div style={{ position: 'relative', height: h, background: C.deep, border: '1px solid rgba(210,75,255,.4)',
+    <div {...trackAttrs} style={{ position: 'relative', height: h, background: C.deep, border: '1px solid rgba(210,75,255,.4)',
       ...(!flat && { clipPath: 'polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)' }) }}>
       <div {...fillProps} style={{ position: 'absolute', inset: '0 auto 0 0', width: `${pct}%`, background: grad,
         boxShadow: flat ? '0 0 6px rgba(63,232,255,.5)' : '0 0 10px rgba(210,75,255,.7)' }} />

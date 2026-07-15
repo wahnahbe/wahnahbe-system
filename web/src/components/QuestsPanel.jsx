@@ -174,7 +174,7 @@ export function QuestsPanel({
   };
 
   return (
-    <div style={panelStyle}>
+    <div data-fx-panel style={panelStyle}>
       <SectionTitle jp="クエスト" showJp={showJp}>QST://QUESTS</SectionTitle>
       <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 18 }}>
 

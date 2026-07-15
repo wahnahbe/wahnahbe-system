@@ -45,7 +45,7 @@ export function AgendaStrip({ agenda, today, onAdd, onDelete }) {
   };
 
   return (
-    <div style={{
+    <div data-fx-panel style={{
       display: 'flex', alignItems: 'center', gap: 12, margin: '12px 14px 0', padding: '7px 14px',
       background: C.panel, backdropFilter: 'blur(8px)', border: '1px solid rgba(210,75,255,.4)',
       clipPath: clip(10),

@@ -172,7 +172,7 @@ export function StatusPanel({ learning, health, mastery, byStat, showJp, onLogWe
   };
 
   return (
-    <div style={panelStyle}>
+    <div data-fx-panel style={panelStyle}>
       <SectionTitle jp="ステータス" showJp={showJp}>SYS://STATUS</SectionTitle>
       <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 16 }}>
 

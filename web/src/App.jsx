@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDashboard } from './hooks/useDashboard.js';
+import { useRankFx } from './hooks/useRankFx.js';
 import { C, fonts } from './theme.js';
 import { HeaderTicker } from './components/HeaderTicker.jsx';
 import { AgendaStrip } from './components/AgendaStrip.jsx';
@@ -23,6 +24,8 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [note, setNote] = useState(null);
   const [ascendLevel, setAscendLevel] = useState(null);
+
+  useRankFx(data?.xp?.level ?? 1, data?.settings ?? {});
 
   useEffect(() => {
     if (!note) return undefined;
@@ -75,7 +78,7 @@ export default function App() {
       <AgendaStrip agenda={data.agenda} today={data.today}
         onAdd={(ev) => run('POST', '/agenda', ev)}
         onDelete={(id) => run('DELETE', `/agenda/${id}`)} />
-      <div style={{
+      <div data-fx-root style={{
         display: 'grid', gridTemplateColumns: '335px 1fr 355px', gap: 14, padding: 14,
         height: 'calc(100vh - 176px)', boxSizing: 'border-box',
       }}>

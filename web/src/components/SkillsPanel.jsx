@@ -181,7 +181,7 @@ function RecentSyncFeed({ activity, gradebook }) {
  */
 export function SkillsPanel({ learning, tutor, activity, japanese, showJp, onTrain }) {
   return (
-    <div style={panelStyle}>
+    <div data-fx-panel style={panelStyle}>
       <SectionTitle jp="スキル" showJp={showJp}>SKL://SKILLS</SectionTitle>
       <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 14 }}>
 

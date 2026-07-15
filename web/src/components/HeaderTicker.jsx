@@ -48,7 +48,7 @@ export function HeaderTicker({ xp, momentum, settings, onOpenSettings, onToggleM
   const { accent } = rankTheme(xp.level);
 
   return (
-    <div style={{
+    <div data-fx-panel style={{
       display: 'flex', alignItems: 'stretch', gap: 0, height: 84, margin: '12px 14px 0',
       background: C.panel, backdropFilter: 'blur(8px)', border: '1px solid rgba(210,75,255,.5)',
       clipPath: clip(16),
@@ -85,7 +85,7 @@ export function HeaderTicker({ xp, momentum, settings, onOpenSettings, onToggleM
           </div>
           <div style={{ fontSize: 10, color: 'rgba(242,234,255,.55)', letterSpacing: '.08em' }}>{xpLabel}</div>
         </div>
-        <Bar pct={xp.pct} grad={accent.barGrad} />
+        <Bar pct={xp.pct} grad={accent.barGrad} trackAttrs={{ 'data-fx-xpbar': true }} />
       </div>
 
       <div style={{
@@ -98,10 +98,11 @@ export function HeaderTicker({ xp, momentum, settings, onOpenSettings, onToggleM
             {formatTime(now)}
           </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+        <div data-momentum-high={momentum >= 70 ? '1' : undefined}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
           <svg width="46" height="46" viewBox="0 0 46 46">
             <circle cx="23" cy="23" r={MOMENTUM_R} fill="none" stroke="rgba(210,75,255,.2)" strokeWidth="3" />
-            <circle cx="23" cy="23" r={MOMENTUM_R} fill="none" stroke={C.cyan} strokeWidth="3"
+            <circle data-fx-ring cx="23" cy="23" r={MOMENTUM_R} fill="none" stroke={C.cyan} strokeWidth="3"
               strokeDasharray={momDash} transform="rotate(-90 23 23)"
               style={{ filter: 'drop-shadow(0 0 4px rgba(63,232,255,.8))' }} />
             <text x="23" y="27" textAnchor="middle" fill={C.cyan} fontSize="11" fontFamily={fonts.mono}>{momentum}</text>
