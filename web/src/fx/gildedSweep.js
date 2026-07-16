@@ -2,6 +2,7 @@ import gsap from 'gsap';
 
 const PANEL_SELECTOR = '[data-fx-panel]';
 const STREAK_WIDTH = '26%';
+const STREAK_WIDTH_RATIO = 0.26;
 const DURATION = 1.8;
 const EASE = 'power2.inOut';
 const REPEAT_DELAY = 45;
@@ -14,6 +15,7 @@ let streak = null;
 let timeline = null;
 let previousPositionInline = null;
 let positionMutated = false;
+let onResize = null;
 
 /**
  * Gold light streak sweeping across the header ticker (the first
@@ -23,6 +25,12 @@ let positionMutated = false;
  * rather than an opaque bar, and clipped by the ancestor panel's clip-path.
  * A GSAP timeline slides it from just off the left edge to well past the
  * right edge, repeating indefinitely with a long cooldown between passes.
+ * GSAP's `%` on a transform is relative to the *element's own* size, not its
+ * container's — since the streak is only ~26% of the panel's width, tweening
+ * `x` in `%` undershoots a full traverse. Instead the panel's width is
+ * measured at tween-build time and `x` is tweened in `px` from
+ * `-streakWidth` to `panelWidth`, rebuilt (kill + recreate) on window
+ * resize, same pattern as energyFlow.js.
  *
  * The panel needs a positioned ancestor for the streak's `position:
  * absolute` to anchor to it — `[data-fx-panel]` (HeaderTicker) doesn't set
@@ -59,12 +67,26 @@ export function mount(ctx) {
   });
   panel.appendChild(streak);
 
-  timeline = gsap.timeline({ repeat: -1, repeatDelay: REPEAT_DELAY });
-  timeline.fromTo(streak, { x: '-20%' }, { x: '120%', duration: DURATION, ease: EASE });
+  const createTimeline = () => {
+    const panelWidth = panel.getBoundingClientRect().width || panel.offsetWidth || 0;
+    const streakWidth = panelWidth * STREAK_WIDTH_RATIO;
+    timeline?.kill();
+    timeline = gsap.timeline({ repeat: -1, repeatDelay: REPEAT_DELAY });
+    timeline.fromTo(streak, { x: -streakWidth }, { x: panelWidth, duration: DURATION, ease: EASE });
+  };
+
+  createTimeline();
+
+  onResize = () => createTimeline();
+  window.addEventListener('resize', onResize);
 }
 
 export function unmount() {
   if (!active) return;
+  if (onResize) {
+    window.removeEventListener('resize', onResize);
+    onResize = null;
+  }
   timeline?.kill();
   timeline = null;
   streak?.remove();

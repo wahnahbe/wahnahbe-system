@@ -102,7 +102,7 @@ export default function App() {
       </div>
       <Notification note={note} />
       {ascend && (
-        <AscensionOverlay level={ascend.level} name={ascend.name} reducedMotion={rm}
+        <AscensionOverlay key={ascend.level} level={ascend.level} name={ascend.name} reducedMotion={rm}
           onClose={() => setAscend(null)} />
       )}
       {!booted && !rm && <BootSequence onDone={() => setBooted(true)} />}

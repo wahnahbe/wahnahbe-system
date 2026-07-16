@@ -74,8 +74,10 @@ function buildTimeline({ backdrop, name, insignia, ring, particles }) {
  * threshold. Under `reducedMotion` it renders a static fallback (current
  * markup + a large insignia, no GSAP). Otherwise it builds a master timeline
  * on mount: backdrop opacity snap, scramble-decode of the rank name, insignia
- * draw-in, and an outward ring + particle shockwave. Click anywhere kills the
- * in-flight timeline and dismisses.
+ * draw-in, and an outward ring + particle shockwave. Click anywhere reverts
+ * the in-flight timeline (GSAP 3.11+ restores all touched inline state,
+ * including the scrambled text, rather than freezing mid-tween) and
+ * dismisses.
  * @param {{ level: number|string, name: string, reducedMotion?: boolean, onClose: () => void }} props
  */
 export function AscensionOverlay({ level, name, reducedMotion, onClose }) {
@@ -99,13 +101,13 @@ export function AscensionOverlay({ level, name, reducedMotion, onClose }) {
     tlRef.current = tl;
 
     return () => {
-      tl.kill();
+      tl.revert();
       tlRef.current = null;
     };
   }, [reducedMotion]);
 
   const handleClick = () => {
-    tlRef.current?.kill();
+    tlRef.current?.revert();
     tlRef.current = null;
     onClose();
   };

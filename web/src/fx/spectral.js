@@ -18,6 +18,7 @@ let radarObserver = null;
 let tween = null;
 let busy = false;
 let glowEl = null;
+let previousFilter = null;
 
 /** @param {string} tag @returns {Element} */
 function svgEl(tag) {
@@ -59,12 +60,19 @@ function buildFilterDef() {
  * appearing mid-radar-tween, or vice versa) a no-op for the later one,
  * since one shared `<filter>` can't animate two independent displacements
  * at once — v1 accepts skipping the overlap rather than queuing it.
+ *
+ * Captures `el.style.filter` before overwriting it so the tween's
+ * `onComplete` (and `unmount`, if it fires mid-tween) restores whatever the
+ * element owned beforehand — e.g. the radar polygon's React-owned
+ * `drop-shadow(...)` glow — instead of clobbering it back to `''`. Note
+ * lines have no prior inline filter, so they naturally capture `''`.
  * @param {Element} el
  */
 function trigger(el) {
   if (busy || !el || !displacementEl) return;
   busy = true;
   glowEl = el;
+  previousFilter = el.style.filter;
   el.style.filter = `url(#${FILTER_ID})`;
   tween = gsap.fromTo(displacementEl,
     { attr: { scale: SCALE_FROM } },
@@ -73,8 +81,9 @@ function trigger(el) {
       duration: DURATION,
       ease: EASE,
       onComplete: () => {
-        el.style.filter = '';
+        el.style.filter = previousFilter;
         glowEl = null;
+        previousFilter = null;
         tween = null;
         busy = false;
       },
@@ -135,8 +144,9 @@ export function unmount() {
   tween?.kill();
   tween = null;
   if (glowEl) {
-    glowEl.style.filter = '';
+    glowEl.style.filter = previousFilter ?? '';
     glowEl = null;
+    previousFilter = null;
   }
   svgDef?.remove();
   svgDef = null;

@@ -142,6 +142,7 @@ export function mount(ctx) {
   fxRoot.insertBefore(canvas, fxRoot.firstChild);
   resize();
   elapsed = 0;
+  lastFrameTime = null; // skip delta on the first frame of a fresh mount
   rafId = requestAnimationFrame(draw);
 
   onResize = () => resize();
