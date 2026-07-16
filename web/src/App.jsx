@@ -79,6 +79,7 @@ export default function App() {
         onAdd={(ev) => run('POST', '/agenda', ev)}
         onDelete={(id) => run('DELETE', `/agenda/${id}`)} />
       <div data-fx-root style={{
+        position: 'relative',
         display: 'grid', gridTemplateColumns: '335px 1fr 355px', gap: 14, padding: 14,
         height: 'calc(100vh - 176px)', boxSizing: 'border-box',
       }}>

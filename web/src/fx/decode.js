@@ -5,13 +5,21 @@ gsap.registerPlugin(ScrambleTextPlugin);
 
 const TITLE_SELECTOR = '[data-fx-title]';
 const NOTE_LINE_SELECTOR = '[data-fx-note-line]';
-const NOTES_SELECTOR = '[data-fx-notes]';
 
 let active = false;
 let observer = null;
-let notesRoot = null;
 const originalText = new Map(); // Element -> original text, for restore-on-unmount
 const tweens = new Set();
+
+/**
+ * Test-only seam: exposes the size of the internal originalText map so tests
+ * can assert entries are pruned when a notification's DOM is removed, without
+ * reaching into module-private state.
+ * @returns {number}
+ */
+export function __originalTextSize() {
+  return originalText.size;
+}
 
 /**
  * Scramble-decodes one element's text in place, remembering the original so
@@ -58,28 +66,43 @@ export function mount(ctx) {
   });
   tweens.add(titleTween);
 
-  notesRoot = root.querySelector(NOTES_SELECTOR);
-  if (notesRoot) {
-    observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        for (const node of mutation.addedNodes) {
-          if (node.nodeType !== 1) continue;
-          const lines = node.matches?.(NOTE_LINE_SELECTOR)
-            ? [node]
-            : Array.from(node.querySelectorAll?.(NOTE_LINE_SELECTOR) ?? []);
-          lines.forEach((line) => decodeEl(line, 0.5));
+  // invariant: Notification renders `[data-fx-notes]` conditionally — it
+  // returns null when no note is active, so the container (and every line
+  // inside it) is a brand-new DOM node each time a notification appears, and
+  // it's gone again once the auto-clear timer fires. Querying for the
+  // container once at mount time and observing *it* would miss every
+  // notification that hadn't appeared yet, and would go blind the instant the
+  // current one unmounts. Observing `document.body` with `subtree: true`
+  // instead catches every notification's container and lines regardless of
+  // when they mount, for as long as this fx module stays active.
+  const bodyRoot = root.body ?? root;
+  observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType !== 1) continue;
+        const lines = node.matches?.(NOTE_LINE_SELECTOR)
+          ? [node]
+          : Array.from(node.querySelectorAll?.(NOTE_LINE_SELECTOR) ?? []);
+        lines.forEach((line) => decodeEl(line, 0.5));
+      }
+      for (const node of mutation.removedNodes) {
+        if (node.nodeType !== 1) continue;
+        // Prune any tracked element that was removed directly or as a
+        // descendant of a removed subtree, so restore-on-unmount never tries
+        // to write text back into a detached node and the map can't leak.
+        for (const el of originalText.keys()) {
+          if (node === el || node.contains?.(el)) originalText.delete(el);
         }
       }
-    });
-    observer.observe(notesRoot, { childList: true, subtree: true });
-  }
+    }
+  });
+  observer.observe(bodyRoot, { childList: true, subtree: true });
 }
 
 export function unmount() {
   if (!active) return;
   observer?.disconnect();
   observer = null;
-  notesRoot = null;
   tweens.forEach((tween) => tween.kill());
   tweens.clear();
   originalText.forEach((text, el) => {
