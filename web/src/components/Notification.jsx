@@ -9,7 +9,7 @@ import { C, fonts } from '../theme.js';
 export function Notification({ note }) {
   if (!note) return null;
   return (
-    <div style={{
+    <div data-fx-notes style={{
       position: 'fixed', top: '16%', left: '50%', transform: 'translateX(-50%)', zIndex: 70,
       minWidth: 340, background: 'rgba(22,12,40,.92)', backdropFilter: 'blur(10px)',
       border: `1px solid ${C.mag}`,
@@ -32,7 +32,7 @@ export function Notification({ note }) {
       </div>
       <div style={{ padding: '13px 18px 15px', display: 'flex', flexDirection: 'column', gap: 5 }}>
         {note.lines.map((line, i) => (
-          <div key={`${i}-${line}`} style={{ fontSize: 12, color: C.text, letterSpacing: '.07em' }}>{line}</div>
+          <div key={`${i}-${line}`} data-fx-note-line style={{ fontSize: 12, color: C.text, letterSpacing: '.07em' }}>{line}</div>
         ))}
       </div>
     </div>

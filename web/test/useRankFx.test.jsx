@@ -20,6 +20,9 @@ function mockModule(name) {
 vi.mock('../src/fx/panelFocus.js', () => mockModule('panelFocus'));
 vi.mock('../src/fx/energyFlow.js', () => mockModule('energyFlow'));
 vi.mock('../src/fx/ringDraw.js', () => mockModule('ringDraw'));
+vi.mock('../src/fx/decode.js', () => mockModule('decode'));
+vi.mock('../src/fx/bootCascade.js', () => mockModule('bootCascade'));
+vi.mock('../src/fx/dataRain.js', () => mockModule('dataRain'));
 
 function Harness({ level, settings }) {
   useRankFx(level, settings);
@@ -37,6 +40,14 @@ it('mounts exactly panelFocus, energyFlow, ringDraw at level 4', async () => {
   mounted.length = 0;
   render(<Harness level={4} settings={{ reducedMotion: false, fxRank: true }} />);
   await waitFor(() => expect(mounted.sort()).toEqual(['energyFlow', 'panelFocus', 'ringDraw'].sort()));
+});
+
+it('mounts exactly six modules in ladder order at level 7 (through dataRain)', async () => {
+  mounted.length = 0;
+  render(<Harness level={7} settings={{ reducedMotion: false, fxRank: true }} />);
+  await waitFor(() => expect(mounted).toEqual(
+    ['panelFocus', 'energyFlow', 'ringDraw', 'decode', 'bootCascade', 'dataRain']
+  ));
 });
 
 it('mounts nothing when reducedMotion is true, even at a high level', async () => {

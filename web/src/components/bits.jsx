@@ -8,7 +8,7 @@ import { C, fonts } from '../theme.js';
 export const SectionTitle = ({ children, jp, showJp }) => (
   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
     padding: '12px 16px 9px', borderBottom: `1px solid rgba(210,75,255,.35)` }}>
-    <div style={{ fontFamily: fonts.display, fontWeight: 700, fontSize: 15, letterSpacing: '.2em', color: C.mag }}>{children}</div>
+    <div data-fx-title style={{ fontFamily: fonts.display, fontWeight: 700, fontSize: 15, letterSpacing: '.2em', color: C.mag }}>{children}</div>
     {showJp && jp && <div style={{ fontFamily: fonts.jp, fontSize: 10, color: 'rgba(63,232,255,.55)' }}>{jp}</div>}
   </div>
 );
