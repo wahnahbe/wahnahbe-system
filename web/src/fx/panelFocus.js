@@ -25,8 +25,9 @@ function focusOut(panel) {
     duration: DURATION,
     ease: EASE,
     y: 0,
-    boxShadow: '0 0 0px rgba(210,75,255,0)',
-    borderColor: 'rgba(210,75,255,.5)',
+    onComplete() {
+      gsap.set(panel, { clearProps: 'y,boxShadow,borderColor' });
+    },
   });
 }
 
@@ -72,7 +73,7 @@ export function unmount() {
   boundRoot.removeEventListener('pointerover', onOver);
   boundRoot.removeEventListener('pointerout', onOut);
   gsap.killTweensOf(PANEL_SELECTOR);
-  gsap.set(PANEL_SELECTOR, { clearProps: 'all' });
+  gsap.set(PANEL_SELECTOR, { clearProps: 'y,boxShadow,borderColor' });
   onOver = null;
   onOut = null;
   boundRoot = null;

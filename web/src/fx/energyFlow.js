@@ -6,6 +6,7 @@ const SWEEP_WIDTH = 40;
 let sweepEl = null;
 let tween = null;
 let active = false;
+let onResize = null;
 
 /**
  * Adds a light-sweep overlay to the header XP bar track, looping indefinitely.
@@ -35,14 +36,28 @@ export function mount(ctx) {
   track.appendChild(sweep);
   sweepEl = sweep;
 
-  const trackWidth = track.getBoundingClientRect().width || track.offsetWidth || 0;
-  tween = gsap.fromTo(sweep,
-    { x: -SWEEP_WIDTH },
-    { x: trackWidth, duration: 3.2, ease: 'none', repeat: -1, repeatDelay: 2 });
+  const createTween = () => {
+    const trackWidth = track.getBoundingClientRect().width || track.offsetWidth || 0;
+    tween?.kill();
+    tween = gsap.fromTo(sweep,
+      { x: -SWEEP_WIDTH },
+      { x: trackWidth, duration: 3.2, ease: 'none', repeat: -1, repeatDelay: 2 });
+  };
+
+  createTween();
+
+  onResize = () => {
+    createTween();
+  };
+  window.addEventListener('resize', onResize);
 }
 
 export function unmount() {
   if (!active) return;
+  if (onResize) {
+    window.removeEventListener('resize', onResize);
+    onResize = null;
+  }
   tween?.kill();
   tween = null;
   sweepEl?.remove();

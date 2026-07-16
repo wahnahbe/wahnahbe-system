@@ -73,7 +73,6 @@ it('never mounts a module whose import resolves after the gate flips off mid-fli
     resolveLoader = resolve;
   });
   const mountSpy = vi.fn();
-  const unmountSpy = vi.fn();
   const useInjectedRankFx = createUseRankFx({ panelFocus: () => pending });
 
   function InjectedHarness({ level, settings }) {
@@ -89,7 +88,7 @@ it('never mounts a module whose import resolves after the gate flips off mid-fli
   // runs the effect cleanup (cancelled = true) before the import settles.
   rerender(<InjectedHarness level={2} settings={{ reducedMotion: false, fxRank: false }} />);
 
-  resolveLoader({ mount: mountSpy, unmount: unmountSpy });
+  resolveLoader({ mount: mountSpy, unmount: () => {} });
   await pending;
   await waitFor(() => {}); // let the hook's post-await continuation run
 
