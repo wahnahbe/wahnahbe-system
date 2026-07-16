@@ -43,7 +43,8 @@ let mesh = null;
 let rafId = null;
 let onResize = null;
 let onVisibility = null;
-let elapsed = 0; // seconds of uTime accumulated so far, frozen while paused
+let elapsed = 0; // seconds of uTime accumulated so far
+let lastFrameTime = null; // rAF timestamp from the previous frame, or null to skip delta on first frame
 
 /** Resizes the renderer (and its canvas) to fill `[data-fx-root]`. */
 function resize() {
@@ -53,7 +54,8 @@ function resize() {
 
 /** @param {number} now DOMHighResTimeStamp from requestAnimationFrame */
 function draw(now) {
-  elapsed = now / 1000;
+  if (lastFrameTime != null) elapsed += (now - lastFrameTime) / 1000;
+  lastFrameTime = now;
   program.uniforms.uTime.value = elapsed;
   renderer.render({ scene: mesh });
   rafId = requestAnimationFrame(draw);
@@ -68,6 +70,7 @@ function pauseLoop() {
 
 function resumeLoop() {
   if (active && rafId == null && document.visibilityState !== 'hidden') {
+    lastFrameTime = null; // skip delta on first post-resume frame
     rafId = requestAnimationFrame(draw);
   }
 }

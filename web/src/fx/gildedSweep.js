@@ -20,10 +20,9 @@ let positionMutated = false;
  * `[data-fx-panel]` — the header, ahead of the agenda strip and the three
  * column panels). A single `<div>` this module owns is appended inside the
  * panel, blended with `mixBlendMode: 'screen'` so it reads as a highlight
- * rather than an opaque bar, and clipped to the panel's own chamfered shape
- * via `clipPath: 'inherit'`. A GSAP timeline slides it from just off the
- * left edge to well past the right edge, repeating indefinitely with a long
- * cooldown between passes.
+ * rather than an opaque bar, and clipped by the ancestor panel's clip-path.
+ * A GSAP timeline slides it from just off the left edge to well past the
+ * right edge, repeating indefinitely with a long cooldown between passes.
  *
  * The panel needs a positioned ancestor for the streak's `position:
  * absolute` to anchor to it — `[data-fx-panel]` (HeaderTicker) doesn't set
@@ -56,7 +55,6 @@ export function mount(ctx) {
     height: '100%',
     background: GOLD_GRADIENT,
     mixBlendMode: 'screen',
-    clipPath: 'inherit',
     pointerEvents: 'none',
   });
   panel.appendChild(streak);

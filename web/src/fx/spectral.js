@@ -101,12 +101,11 @@ export function mount(ctx) {
   const root = ctx?.root ?? document;
 
   const { svg, displacement } = buildFilterDef();
-  document.body.appendChild(svg);
+  const bodyRoot = root.body ?? root;
+  bodyRoot.appendChild(svg);
   svgDef = svg;
   displacementEl = displacement;
   active = true;
-
-  const bodyRoot = root.body ?? root;
   bodyObserver = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {
