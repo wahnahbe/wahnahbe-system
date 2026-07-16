@@ -50,7 +50,7 @@ export function createUseRankFx(loaderMap) {
           if (!loadModule) continue;
           const mod = await loadModule();
           if (cancelled) return;
-          mod.mount?.({ root: document });
+          mod.mount?.({ root: document, starTier: Math.min(Math.max(level - 10, 0), 5) });
           active.set(name, mod);
         }
       })();

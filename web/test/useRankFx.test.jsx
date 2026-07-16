@@ -6,10 +6,14 @@ import { useRankFx, createUseRankFx } from '../src/hooks/useRankFx.js';
 afterEach(cleanup);
 
 const mounted = [];
+const capturedCtx = new Map();
 
 function mockModule(name) {
   return {
-    mount: () => mounted.push(name),
+    mount: (ctx) => {
+      mounted.push(name);
+      capturedCtx.set(name, ctx);
+    },
     unmount: () => {
       const i = mounted.indexOf(name);
       if (i >= 0) mounted.splice(i, 1);
@@ -23,6 +27,9 @@ vi.mock('../src/fx/ringDraw.js', () => mockModule('ringDraw'));
 vi.mock('../src/fx/decode.js', () => mockModule('decode'));
 vi.mock('../src/fx/bootCascade.js', () => mockModule('bootCascade'));
 vi.mock('../src/fx/dataRain.js', () => mockModule('dataRain'));
+vi.mock('../src/fx/spectral.js', () => mockModule('spectral'));
+vi.mock('../src/fx/gildedSweep.js', () => mockModule('gildedSweep'));
+vi.mock('../src/fx/aurora.js', () => mockModule('aurora'));
 
 function Harness({ level, settings }) {
   useRankFx(level, settings);
@@ -48,6 +55,24 @@ it('mounts exactly six modules in ladder order at level 7 (through dataRain)', a
   await waitFor(() => expect(mounted).toEqual(
     ['panelFocus', 'energyFlow', 'ringDraw', 'decode', 'bootCascade', 'dataRain']
   ));
+});
+
+it('mounts exactly nine modules in ladder order at level 10 (through aurora)', async () => {
+  mounted.length = 0;
+  render(<Harness level={10} settings={{ reducedMotion: false, fxRank: true }} />);
+  await waitFor(() => expect(mounted).toEqual([
+    'panelFocus', 'energyFlow', 'ringDraw', 'decode', 'bootCascade', 'dataRain',
+    'spectral', 'gildedSweep', 'aurora',
+  ]));
+});
+
+it('passes ctx.starTier = min(max(level-10,0),5) to every mount, e.g. 2 at level 12', async () => {
+  mounted.length = 0;
+  capturedCtx.clear();
+  render(<Harness level={12} settings={{ reducedMotion: false, fxRank: true }} />);
+  await waitFor(() => expect(mounted.length).toBe(9));
+  expect(capturedCtx.get('aurora')).toEqual({ root: document, starTier: 2 });
+  expect(capturedCtx.get('panelFocus')).toEqual({ root: document, starTier: 2 });
 });
 
 it('mounts nothing when reducedMotion is true, even at a high level', async () => {

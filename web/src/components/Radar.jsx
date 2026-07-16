@@ -49,7 +49,7 @@ export const Radar = ({ stats }) => {
       {ANGLES.map((a, i) => (
         <line key={i} x1={cx} y1={cy} x2={cx + Math.cos(a) * r} y2={cy + Math.sin(a) * r} stroke="rgba(210,75,255,.12)" />
       ))}
-      <polygon points={radarPoints(stats, cx, cy, r)} fill="rgba(210,75,255,.22)" stroke={C.cyan}
+      <polygon data-fx-radar points={radarPoints(stats, cx, cy, r)} fill="rgba(210,75,255,.22)" stroke={C.cyan}
         strokeWidth="1.5" style={{ filter: 'drop-shadow(0 0 6px rgba(63,232,255,.6))' }} />
       {stats.map((s, i) => {
         const lx = cx + Math.cos(ANGLES[i]) * (r + 16);
