@@ -23,7 +23,7 @@ export default function App() {
   const [booted, setBooted] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [note, setNote] = useState(null);
-  const [ascendLevel, setAscendLevel] = useState(null);
+  const [ascend, setAscend] = useState(null);
 
   useRankFx(data?.xp?.level ?? 1, data?.settings ?? {});
 
@@ -38,7 +38,9 @@ export default function App() {
       const result = await act(method, path, body);
       if (result?.award) {
         setNote({ lines: successLines ?? [`+${result.award.amount} XP BANKED`] });
-        if (result.award.ascended) setAscendLevel(result.award.ascended);
+        if (result.award.ascended) {
+          setAscend({ level: result.award.ascended, name: result.award.xp.name });
+        }
       } else if (successLines) {
         setNote({ lines: successLines });
       }
@@ -99,7 +101,10 @@ export default function App() {
             { amount, stat, reason: 'TRAINING SESSION', source: 'training' })} />
       </div>
       <Notification note={note} />
-      {ascendLevel && <AscensionOverlay level={ascendLevel} onClose={() => setAscendLevel(null)} />}
+      {ascend && (
+        <AscensionOverlay level={ascend.level} name={ascend.name} reducedMotion={rm}
+          onClose={() => setAscend(null)} />
+      )}
       {!booted && !rm && <BootSequence onDone={() => setBooted(true)} />}
       <SettingsDrawer open={settingsOpen} settings={settings} quests={data.quests} health={data.health}
         onClose={() => setSettingsOpen(false)}

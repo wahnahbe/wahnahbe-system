@@ -11,6 +11,7 @@ import { radarPoints } from '../src/components/Radar.jsx';
 import { SettingsDrawer } from '../src/components/SettingsDrawer.jsx';
 import { rankTheme } from '../src/rankTheme.js';
 import { RankInsignia } from '../src/components/RankInsignia.jsx';
+import { AscensionOverlay } from '../src/components/AscensionOverlay.jsx';
 import App from '../src/App.jsx';
 
 afterEach(cleanup);
@@ -49,6 +50,14 @@ it('HeaderTicker shows the rank insignia', () => {
   render(<HeaderTicker xp={xp} momentum={21} settings={settings}
     onOpenSettings={() => {}} onToggleMotion={() => {}} />);
   expect(document.querySelector('[data-testid="rank-insignia"]')).toBeTruthy();
+});
+
+it('AscensionOverlay reduced-motion fallback renders the rank name and insignia statically', () => {
+  const { container } = render(
+    <AscensionOverlay level={6} name="Architect" reducedMotion onClose={vi.fn()} />,
+  );
+  expect(screen.getByText('LEVEL UP — ARCHITECT')).toBeTruthy();
+  expect(container.querySelector('[data-testid="rank-insignia"]')).toBeTruthy();
 });
 
 it('AgendaStrip shows empty state and upcoming count', () => {
